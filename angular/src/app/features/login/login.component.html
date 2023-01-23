@@ -1,8 +1,16 @@
 <div class="little-container">
   <h1>Qwerty Runes</h1>
-  <h2>Entre com sua conta ou cadastre-se, confia, é bem rapido!</h2>
-  <input type="text" placeholder="Nickname" />
-  <input type="text" placeholder="Senha" />
-  <a routerLink="cadastro">Cadastrar conta</a>
-  <button>Entrar</button>
+  <h2>Entre com sua conta ou cadastre-se, é bem rapido!</h2>
+  <div class="inputs-container">
+    <input [(ngModel)]="nickname" class="account-input" type="text" placeholder="Nickname" />
+    <input [(ngModel)]="password" class="account-input" type="password" placeholder="Senha" />
+    <div class="remember-me-container">
+      <input id="remember-me" type="checkbox" />
+      <label for="remember-me">Lembrar da conta</label>
+    </div>
+  </div>
+  <div class="bottom-container">
+    <a routerLink="registration">Cadastrar conta</a>
+    <button (click)="onSubmit()">Entrar</button>
+  </div>
 </div>

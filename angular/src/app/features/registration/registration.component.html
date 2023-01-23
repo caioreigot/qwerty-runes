@@ -1,0 +1,13 @@
+<div class="little-container">
+  <h1>Cadastro</h1>
+  <h2>Lembre-se que você precisará usar seu nickname para fazer o login</h2>
+  <div class="inputs-container">
+    <input [(ngModel)]="nickname" class="account-input" type="text" placeholder="Nickname" />
+    <input [(ngModel)]="password" class="account-input" type="password" placeholder="Senha" />
+    <input [(ngModel)]="confirmPassword" class="account-input" type="password" placeholder="Confirmar senha" />
+  </div>
+  <div class="bottom-container">
+    <a routerLink="/">Voltar</a>
+    <button (click)="onSubmit()">Pronto</button>
+  </div>
+</div>

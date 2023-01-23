@@ -20,7 +20,7 @@
   padding: 20px;
   background-color: @light;
   border-radius: 10px;
-  
+
   h1, h2 {
     color: @dark;
     text-align: center;
@@ -52,7 +52,6 @@
   }
 
   label[for="remember-me"] {
-    cursor: pointer;
     user-select: none;
   }
 }
@@ -60,13 +59,13 @@
 .account-input {
   padding: 0 8px;
   vertical-align: middle;
-  border: 1px solid #241c154d;
   border-radius: 2px;
   width: 100%;
   min-height: 48px;
   background-color: #ffffff;
-  transition: all 0.2s ease-in-out 0s;
   color: @dark;
+  border: 1px solid rgba(36,28,21,0.3);
+  transition: all 0.2s ease-in-out 0s;
   font-size: 1.4rem;
 
   &:hover {
@@ -90,7 +89,7 @@ button {
   font-size: 14px;
   line-height: 1;
   border-radius: 500px;
-  transition: all ease-in-out 200ms;
+  transition: all ease 200ms;
   border: 0;
   letter-spacing: 2px;
   min-width: 160px;
@@ -123,19 +122,6 @@ a {
   &:hover {
     transform: scale(110%);
     filter: brightness(110%)
-  }
-}
-
-.remember-me-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  width: 100%;
-  gap: 10px;
-
-  input[type="checkbox"] {
-    height: 20px;
-    width: 20px;
   }
 }
 
