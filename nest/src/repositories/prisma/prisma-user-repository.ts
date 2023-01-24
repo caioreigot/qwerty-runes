@@ -2,6 +2,7 @@ import { PrismaService } from '../../database/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../user-repository';
 import { createHash } from 'crypto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -19,10 +20,10 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  async validate(nickname: string, password: string): Promise<void> {
+  async validate(nickname: string, password: string): Promise<User> {
     const hash = createHash('sha256').update(password).digest('hex');
 
-    await this.prisma.user.findFirstOrThrow({
+    return await this.prisma.user.findFirstOrThrow({
       where: {
         nickname: nickname,
         passwordHash: hash,

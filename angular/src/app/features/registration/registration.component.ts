@@ -1,4 +1,4 @@
-import { UtilsService } from './../../shared/services/utils.service';
+import { BackendService } from './../../shared/services/backend.service';
 import { SnackbarService } from './../../shared/services/snackbar.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
@@ -17,9 +17,8 @@ export class RegistrationComponent {
   confirmPassword: string = '';
 
   constructor(
-    private http: HttpClient,
-    private utilsService: UtilsService,
-    private snackbarService: SnackbarService
+    private snackbarService: SnackbarService,
+    private backendService: BackendService
   ) {}
 
   onSubmit() {
@@ -28,26 +27,19 @@ export class RegistrationComponent {
       return;
     }
 
-    const createUserEndpoint = this.utilsService.backendBaseUrl + 'user/create';
-
-    const objectToPost = {
-      nickname: this.nickname,
-      password: this.password
-    }
-
-    this.http.post(createUserEndpoint, objectToPost)
-      .pipe(catchError((errorResponse: HttpErrorResponse) => {
+    this.backendService.createUser(this.nickname, this.password).subscribe({
+      error: (errorResponse: HttpErrorResponse) => {
         const message = errorResponse.error.message instanceof Array 
           ? errorResponse.error.message[0]
           : errorResponse.error.message
-
+  
         this.snackbarService.showMessage(message, true);
-        return of();
-      }))
-      .subscribe(() => {
+      },
+      next: () => {
         this.snackbarService.showMessage('Conta criada com sucesso!');
         this.clearForm();
-      })
+      }
+    });
   }
 
   private clearForm() {

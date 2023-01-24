@@ -1,17 +1,26 @@
+import { AuthService } from 'src/auth/shared/auth.service';
+import { LocalAuthGuard } from 'src/auth/shared/local-auth.guard';
+import { JwtAuthGuard } from 'src/auth/shared/jwt-auth.guard';
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { UserBody } from '../../dtos/user-body';
-import { UserRepository } from '../../repositories/user-repository';
+import { UserBody } from 'src/dtos/user-body';
+import { UserRepository } from 'src/repositories/user-repository';
 
 @Controller('user')
 export class UserController {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private authService: AuthService,
+  ) {}
 
   @Post('create')
   async create(@Body() body: UserBody): Promise<void> {
@@ -31,21 +40,15 @@ export class UserController {
     }
   }
 
-  @Post('validate')
-  async validate(@Body() body: UserBody): Promise<void> {
-    try {
-      await this.userRepository.validate(body.nickname, body.password);
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new HttpException(
-            'Nickname ou senha errados, não foi possível logar.',
-            HttpStatus.UNAUTHORIZED,
-          );
-        }
-      }
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async validate(@Req() request: any): Promise<{ access_token: string }> {
+    return this.authService.login(request.user);
+  }
 
-      throw error;
-    }
+  @UseGuards(JwtAuthGuard)
+  @Get('login-with-token')
+  hasToken(): void {
+    return;
   }
 }

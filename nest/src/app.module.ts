@@ -1,3 +1,4 @@
+import { AuthModule } from 'src/auth/auth.module';
 import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { PrismaService } from './database/prisma.service';
@@ -8,6 +9,7 @@ import { UserController } from './controllers/user/user.controller';
 
 @Module({
   imports: [
+    AuthModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, 'front'),
     }),
@@ -20,5 +22,6 @@ import { UserController } from './controllers/user/user.controller';
       useClass: PrismaUserRepository,
     },
   ],
+  exports: [PrismaService],
 })
 export class AppModule {}

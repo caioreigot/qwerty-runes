@@ -1,14 +1,14 @@
+import { BaseUrlHttpInterceptor } from './core/interceptors/BaseUrlHttpInterceptor';
 import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { RegistrationModule } from './features/registration/registration.module';
 import { LoginModule } from './features/login/login.module';
-import { BrowserModule } from '@angular/platform-browser';
-import { SnackbarService } from './shared/services/snackbar.service';
-import { UtilsService } from './shared/services/utils.service';
+import { GamesModule } from './features/games/games.module';
 
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { SharedModule } from './shared/shared.module';
 import { AppRoutingModule } from './app-routing.module';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -17,15 +17,16 @@ import { AppRoutingModule } from './app-routing.module';
   imports: [
     BrowserModule,
     CoreModule,
-    SharedModule,
     AppRoutingModule,
     LoginModule,
     RegistrationModule,
+    GamesModule
   ],
-  providers: [
-    UtilsService,
-    SnackbarService
-  ],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: BaseUrlHttpInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

@@ -68,6 +68,12 @@ export class SnackbarService {
   snackbar: Snackbar = new Snackbar();
 
   showMessage(message: string, isError: boolean = false) {
+    if (!message) {
+      message = isError 
+        ? 'Ops! Erro desconhecido.'
+        : 'Sucesso!';
+    }
+
     this.snackbar.open(message, 3000, isError);
   }
 }
