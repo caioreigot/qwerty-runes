@@ -13,11 +13,22 @@ export class LocalStorageService {
     return localStorage.getItem(this.TOKEN_ID);
   }
 
-  getUserInfo(): string | null {
+  clearToken(): void {
+    localStorage.removeItem(this.TOKEN_ID);
+  }
+
+  getUserNickname(): string | null {
     const token = this.getToken();
     if (!token) return null;
 
-    const payload = window.atob(token.split(".")[1]);
-    return JSON.parse(payload);
+    type Payload = {
+      nickname: string,
+      sub: number,
+      iat: number,
+      exp: number
+    }
+
+    const payload: Payload = JSON.parse(window.atob(token.split(".")[1]));
+    return payload.nickname;
   }
 }

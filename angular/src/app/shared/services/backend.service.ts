@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { LocalStorageService } from './local-storage.service';
 
 @Injectable({ providedIn: 'root' })
@@ -9,7 +9,7 @@ export class BackendService {
   endpoints = {
     user: {
       login: 'user/login',
-      loginWithToken: 'user/login-with-token',
+      loginWithToken: 'user/token-login',
       create: 'user/create'
     }
   } 
@@ -24,8 +24,8 @@ export class BackendService {
     return this.http.post(this.endpoints.user.create, body);
   }
 
-  login(nickname: string, password: string) {
-    const body = { nickname, password };
+  login(nickname: string, password: string, remember: boolean) {
+    const body = { nickname, password, remember };
     return this.http.post(this.endpoints.user.login, body);
   }
 

@@ -9,13 +9,16 @@ export class LocalStrategyService extends PassportStrategy(Strategy) {
     super({
       usernameField: 'nickname',
       passwordField: 'password',
+      passReqToCallback: true,
     });
   }
 
   async validate(
+    request: Request,
     nickname: string,
     password: string,
   ): Promise<{ id: number; nickname: string }> {
-    return await this.authService.validate(nickname, password);
+    const remember = (request.body as any).remember ?? false;
+    return await this.authService.validate(nickname, password, remember);
   }
 }

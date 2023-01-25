@@ -9,12 +9,13 @@
     <input [(ngModel)]="nickname" class="account-input" type="text" placeholder="Nickname" />
     <input [(ngModel)]="password" class="account-input" type="password" placeholder="Senha" />
     <div class="remember-me-container">
-      <input id="remember-me" type="checkbox" />
-      <label for="remember-me">Lembrar da conta</label>
+      <input #rememberCheckbox id="remember-me" type="checkbox" />
+      <label title="Ao entrar com esta opção desmarcada, sua sessão irá expirar em 2 horas" 
+        for="remember-me">Lembrar da conta por mais tempo</label>
     </div>
   </div>
   <div class="bottom-container">
     <a routerLink="registration">Cadastrar conta</a>
-    <button (click)="onSubmit()">Entrar</button>
+    <button (click)="onLogin()">Entrar</button>
   </div>
 </div>

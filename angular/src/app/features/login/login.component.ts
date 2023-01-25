@@ -14,6 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class LoginComponent {
 
   @ViewChild('loadingModal') loadingModal: ElementRef | null = null;
+  @ViewChild('rememberCheckbox') rememberCheckbox: ElementRef | null = null;
 
   nickname = '';
   password = '';
@@ -31,13 +32,16 @@ export class LoginComponent {
     });
   }
 
-  onSubmit() {
+  onLogin() {
+    const rememberCheckbox = this.rememberCheckbox?.nativeElement as HTMLInputElement;
+    const rememberAccount = rememberCheckbox.checked;
+
     if (!this.nickname || !this.password) {
       this.snackbarService.showMessage('Por favor, preencha todos os campos.', true);
       return;
     }
 
-    this.backendService.login(this.nickname, this.password)
+    this.backendService.login(this.nickname, this.password, rememberAccount)
       .subscribe({
         error: (errorResponse: HttpErrorResponse) => {
           const message = errorResponse.error.message instanceof Array 

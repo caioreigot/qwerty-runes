@@ -13,12 +13,13 @@ export class AuthService {
   async validate(
     nickname: string,
     password: string,
-  ): Promise<{ id: number; nickname: string }> {
+    remember: boolean,
+  ): Promise<{ id: number; nickname: string; remember: boolean }> {
     try {
       const user = await this.userRepository.validate(nickname, password);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { passwordHash, ...rest } = user;
-      return rest;
+      return { ...rest, remember };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -33,11 +34,12 @@ export class AuthService {
     }
   }
 
-  async login(user: { id: number; nickname: string }) {
+  async login(user: { id: number; nickname: string }, remember: boolean) {
     const payload = { nickname: user.nickname, sub: user.id };
+    const tokenExp = remember ? '336h' : '2h';
 
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, { expiresIn: tokenExp }),
     };
   }
 }

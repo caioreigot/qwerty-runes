@@ -1,0 +1,36 @@
+@import "/src/app/core/variables.less";
+
+:host {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid @light;
+  border-radius: 5px;
+  padding: 15px 25px;
+  user-select: none;
+
+  &:hover {
+    border-color: @orange;
+    outline: 1px solid @orange;
+  }
+
+  &:active {
+    filter: brightness(120%);
+    outline-width: 2px;
+  }
+}
+
+img {
+  width: 40px;
+  height: 40px;
+}
+
+span {
+  font-family: @varela;
+  font-size: 1.6rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}

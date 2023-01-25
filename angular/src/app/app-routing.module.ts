@@ -1,3 +1,5 @@
+import { GeneralKnowledgeComponent } from './features/games/general-knowledge/general-knowledge.component';
+import { LobbyComponent } from './features/games/lobby/lobby.component';
 import { GamesGuard } from './core/guards/games.guard';
 import { GamesComponent } from './features/games/games.component';
 import { RegistrationComponent } from './features/registration/registration.component';
@@ -13,11 +15,25 @@ const routes: Routes = [
   {
     path: 'games',
     component: GamesComponent,
-    canActivate: [GamesGuard]
+    canActivate: [GamesGuard],
+    children: [
+      {
+        path: '',
+        component: LobbyComponent
+      },
+      {
+        path: 'general-knowledge',
+        component: GeneralKnowledgeComponent
+      }
+    ]
   },
   {
     path: '',
     component: LoginComponent
+  },
+  {
+    path: '**',
+    redirectTo: 'games'
   }
 ];
 

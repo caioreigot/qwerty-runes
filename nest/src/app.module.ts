@@ -6,6 +6,7 @@ import { UserRepository } from './repositories/user-repository';
 import { PrismaUserRepository } from './repositories/prisma/prisma-user-repository';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserController } from './controllers/user/user.controller';
+import { GameGateway } from './gateways/game.gateway';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserController } from './controllers/user/user.controller';
       provide: UserRepository,
       useClass: PrismaUserRepository,
     },
+    GameGateway,
   ],
   exports: [PrismaService],
 })

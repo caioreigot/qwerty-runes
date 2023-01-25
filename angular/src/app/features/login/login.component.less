@@ -1,18 +1,14 @@
-@import "../../core/variables.less";
+@import "/src/app/core/variables.less";
 
 :host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .flex-all-center();
   width: 100vw;
   height: 100vh;
   background-color: @primary;
 }
 
 .loading-modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  .flex-all-center();
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -28,11 +24,9 @@
 }
 
 .little-container {
-  display: flex;
+  .flex-all-center();
   flex-direction: column;
-  align-items: center;
   gap: 10px;
-  justify-content: center;
   height: clamp(480px, 80%, 550px);
   width: clamp(400px, 90%, 500px);
   padding: 20px;
@@ -76,59 +70,11 @@
 }
 
 .account-input {
-  padding: 0 8px;
-  vertical-align: middle;
-  border: 1px solid #241c154d;
-  border-radius: 2px;
-  width: 100%;
-  min-height: 48px;
-  background-color: #ffffff;
-  transition: all 0.2s ease-in-out 0s;
-  color: @dark;
-  font-size: 1.4rem;
-
-  &:hover {
-    box-shadow: inset 0 0 0 1px fade(@primary, 80%);
-  }
-  
-  &:focus{
-    outline: none;
-    border: 1px solid @primary;
-    box-shadow: inset 0 0 0 1px @primary;
-  }
-
-  &::placeholder {
-    color: #33333380;
-  }
+  .simple-input();
 }
 
 button {
-  cursor: pointer;
-  outline: none;
-  font-size: 14px;
-  line-height: 1;
-  border-radius: 500px;
-  transition: all ease-in-out 200ms;
-  border: 0;
-  letter-spacing: 2px;
-  min-width: 160px;
-  text-transform: uppercase;
-  white-space: normal;
-  font-weight: 700;
-  text-align: center;
-  padding: 17px 48px;
-  color: #fff;
-  background-color: @primary;
-  height: 48px;
-  
-  &:hover {
-    transform: scale(1.04);
-    background-color: @primary;
-  }
-
-  &:active {
-    filter: brightness(120%);
-  }
+  .primary-button();
 }
 
 a {

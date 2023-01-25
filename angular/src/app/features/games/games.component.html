@@ -1,1 +1,15 @@
-<p>games works!</p>
+<div class="top-container">
+  <div class="left-side">
+    <img src="/assets/user-profile.svg"/>
+    <h1 [title]="nickname">{{ nickname }}</h1>
+  </div>
+
+  <div (click)="logout()" class="right-side">
+    <img src="/assets/logout.svg" />
+    <span>Sair</span>
+  </div>
+</div>
+
+<main>
+  <router-outlet></router-outlet>
+</main>

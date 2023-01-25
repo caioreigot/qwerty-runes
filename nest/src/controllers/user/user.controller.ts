@@ -43,11 +43,11 @@ export class UserController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async validate(@Req() request: any): Promise<{ access_token: string }> {
-    return this.authService.login(request.user);
+    return this.authService.login(request.user, request.body.remember);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('login-with-token')
+  @Get('token-login')
   hasToken(): void {
     return;
   }

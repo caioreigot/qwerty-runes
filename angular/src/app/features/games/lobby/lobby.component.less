@@ -1,0 +1,66 @@
+@import "/src/app/core/variables.less";
+
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: darken(@primary, 2%);
+}
+
+.left-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-grow: 1;
+  height: 100%;
+  gap: 10px;
+  overflow-y: auto;
+  padding: 20px 0;
+
+  .mini-games-title {
+    font-family: @varela;
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  app-game-card {
+    width: 60%;
+  }
+}
+
+.right-side {
+  width: 350px;
+  height: 100%;
+  background-color: @light;
+
+  .enter-room-code {
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    width: 100%;
+
+    input {
+      .simple-input();
+      text-transform: uppercase;
+
+      &::placeholder {
+        text-transform: none;
+      }
+    }
+    
+    button {
+      .primary-button();
+      width: 35%;
+      border-radius: 0;
+    }
+  }
+}
