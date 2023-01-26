@@ -1,2 +1,8 @@
-<input #input type="text" />
-<button (click)="onSubmit()">Enviar</button>
+<h2>Código da sala: {{ roomCode }}</h2>
+<br/>
+<h1>Participantes:</h1>
+<ul>
+  <li *ngFor="let participant of participants">
+    {{ participant }}
+  </li>
+</ul>

@@ -1,9 +1,8 @@
 import { BackendService } from './../../shared/services/backend.service';
 import { SnackbarService } from './../../shared/services/snackbar.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { isDevMode } from '@angular/core';
-import { catchError, of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -17,6 +16,7 @@ export class RegistrationComponent {
   confirmPassword: string = '';
 
   constructor(
+    private router: Router,
     private snackbarService: SnackbarService,
     private backendService: BackendService
   ) {}
@@ -37,6 +37,7 @@ export class RegistrationComponent {
       },
       next: () => {
         this.snackbarService.showMessage('Conta criada com sucesso!');
+        this.router.navigate(['/']);
         this.clearForm();
       }
     });

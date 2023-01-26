@@ -6,24 +6,21 @@ import { UserRepository } from './repositories/user-repository';
 import { PrismaUserRepository } from './repositories/prisma/prisma-user-repository';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserController } from './controllers/user/user.controller';
-import { GameGateway } from './gateways/game.gateway';
+import { GatewaysModule } from './gateways/gateways.module';
+
+const ConfiguredServeStaticModule = ServeStaticModule.forRoot({
+  rootPath: join(__dirname, 'front'),
+});
+
+const UseUserRepositoryWithPrisma = {
+  provide: UserRepository,
+  useClass: PrismaUserRepository,
+};
 
 @Module({
-  imports: [
-    AuthModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, 'front'),
-    }),
-  ],
+  imports: [AuthModule, GatewaysModule, ConfiguredServeStaticModule],
   controllers: [UserController],
-  providers: [
-    PrismaService,
-    {
-      provide: UserRepository,
-      useClass: PrismaUserRepository,
-    },
-    GameGateway,
-  ],
+  providers: [PrismaService, UseUserRepositoryWithPrisma],
   exports: [PrismaService],
 })
 export class AppModule {}

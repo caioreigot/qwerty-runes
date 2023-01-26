@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class LocalStorageService {
@@ -28,7 +29,7 @@ export class LocalStorageService {
       exp: number
     }
 
-    const payload: Payload = JSON.parse(window.atob(token.split(".")[1]));
+    const payload: Payload = jwt_decode(token);
     return payload.nickname;
   }
 }

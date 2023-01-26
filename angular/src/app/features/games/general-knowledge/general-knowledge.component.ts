@@ -1,4 +1,5 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { LocalStorageService } from './../../../shared/services/local-storage.service';
+import { Component } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
 @Component({
@@ -8,15 +9,28 @@ import { Socket } from 'ngx-socket-io';
 })
 export class GeneralKnowledgeComponent {
 
-  @ViewChild('input') input: ElementRef | null = null;
+  roomCode: string = '';
+  participants: string[] = [
+    this.localStorageService.getUserNickname() ?? ''
+  ];
   
-  constructor(private socket: Socket) {
-    this.socket.fromEvent('message').subscribe(data => {
-      console.log(data);
-    });
+  constructor(
+    private socket: Socket,
+    private localStorageService: LocalStorageService
+  ) {
+    this.subscribeToSocketEvents();
+    
+    const miniGameType = window.location.href.split("/").pop();
+    this.socket.emit('create-room', miniGameType);
   }
 
-  onSubmit() {
-    this.socket.emit('loopback', { data: this.input?.nativeElement.value });
+  subscribeToSocketEvents() {
+    this.socket.fromEvent('room-code').subscribe((roomCode: any) => {
+      this.roomCode = roomCode;
+    });
+
+    this.socket.fromEvent('user-entered-room').subscribe((nickname: any) => {
+      this.participants.push(nickname);
+    });
   }
 }
