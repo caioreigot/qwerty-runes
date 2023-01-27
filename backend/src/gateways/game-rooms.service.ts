@@ -1,6 +1,6 @@
+import * as randomstring from 'randomstring';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import * as randomstring from 'randomstring';
 import { MiniGameRoom, MiniGameType } from 'src/models/mini-game';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class GameRoomsService {
   static ROOM_CODE_LENGTH = 4;
 
   startCleaningEmptyRoomsRoutine(server: Server) {
-    const intervalInMinutes = 30;
+    const intervalInMinutes = 10;
 
     setInterval(() => {
       GameRoomsService.rooms.forEach((room) => {
