@@ -8,8 +8,10 @@ export class GameRoomsService {
   static rooms: MiniGameRoom[] = [];
   static ROOM_CODE_LENGTH = 4;
 
+  /* Ao ser chamada, esta função verifica e remove as salas vazias
+  do array "rooms" desta classe em intervalos de tempo definido */
   startCleaningEmptyRoomsRoutine(server: Server) {
-    const intervalInMinutes = 10;
+    const intervalInMinutes = 5;
 
     setInterval(() => {
       GameRoomsService.rooms.forEach((room) => {
@@ -45,6 +47,7 @@ export class GameRoomsService {
         break;
       }
 
+      // Gera um código aleatório para a sala
       const roomCode = this.generateRandomCode(
         GameRoomsService.ROOM_CODE_LENGTH,
       );
@@ -53,6 +56,7 @@ export class GameRoomsService {
         server.sockets.adapter.rooms.get(roomCode),
       );
 
+      // Se a sala não tiver sido criada antes, entre e envie o código ao host
       if (!roomAlreadyCreated) {
         joinRoomAndEmitCode(roomCode);
         break;
@@ -62,14 +66,22 @@ export class GameRoomsService {
     }
   }
 
-  joinRoom(socketThatWillEnter: Socket, nickname: string, roomCode: string) {
+  // Faz o socket entrar em uma sala e emite o evento passando o nome do jogador que entrou
+  joinRoom(socket: Socket, nickname: string, roomCode: string) {
     const roomCodeFormatted = roomCode.toUpperCase();
-    socketThatWillEnter.join(roomCodeFormatted);
-    socketThatWillEnter
-      .to(roomCodeFormatted)
-      .emit('user-entered-room', nickname);
+    socket.join(roomCodeFormatted);
+    socket.to(roomCodeFormatted).emit('user-entered-room', nickname);
   }
 
+  exitRoomsWhenDisconnecting(socket: Socket) {
+    socket.on('disconnecting', () => {
+      socket.rooms.forEach((room) => {
+        socket.to(room).emit('leaving', socket.id);
+      });
+    });
+  }
+
+  // Remove a sala do array "rooms" desta classe
   private removeRoom(roomCode) {
     const roomIndex = GameRoomsService.rooms.findIndex(
       (room) => room.code === roomCode,

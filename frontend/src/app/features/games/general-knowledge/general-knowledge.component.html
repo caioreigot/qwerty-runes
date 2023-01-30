@@ -1,8 +1,12 @@
-<h2>Código da sala: {{ roomCode }}</h2>
-<br/>
-<h1>Participantes:</h1>
-<ul>
-  <li *ngFor="let participant of participants">
-    {{ participant }}
-  </li>
-</ul>
+<div class="left-side">
+  <span>Placeholder para a pergunta</span>
+  <app-general-knowledge-board class="board" />
+  <input type="text">
+</div>
+
+<div class="right-side">
+  <span class="room-code">Código da sala: {{ roomCode }}</span>
+  <app-player-score-card *ngFor="let nickname of participantsNickname"
+  class="player-score-card"
+  [nickname]="nickname" />
+</div>

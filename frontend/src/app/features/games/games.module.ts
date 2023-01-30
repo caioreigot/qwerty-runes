@@ -13,7 +13,7 @@ import { GeneralKnowledgeComponent } from './general-knowledge/general-knowledge
   ],
   imports: [
     SharedModule,
-    CoreModule
+    CoreModule,
   ],
 })
 export class GamesModule {}

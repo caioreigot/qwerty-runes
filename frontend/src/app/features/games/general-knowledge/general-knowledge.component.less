@@ -1,8 +1,60 @@
+@import "/src/app/core/variables.less";
+
 :host {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   height: 100%;
   width: 100%;
+}
+
+.left-side {
+  display: flex;
+  flex-direction: column;
+  width: 75%;
+  height: 100%;
+
+  span {
+    width: 100%;
+    text-align: center;
+    font-family: @varela;
+    font-size: 1.4rem;
+    padding: 15px;
+  }
+
+  .board {
+    flex-grow: 1;
+  }
+
+  input {
+    text-align: center;
+    height: 50px;
+    padding: 5px 15px;
+    font-size: 1.4rem;
+  }
+}
+
+.right-side {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  background-color: @dark;
+
+  align-items: center;
+  gap: 10px;
+
+  .room-code {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+    font-family: @varela;
+  }
+
+  .player-score-card {
+    width: 90%;
+  }
 }

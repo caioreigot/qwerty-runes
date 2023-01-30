@@ -10,7 +10,7 @@ import { Socket } from 'ngx-socket-io';
 export class GeneralKnowledgeComponent {
 
   roomCode: string = '';
-  participants: string[] = [
+  participantsNickname: string[] = [
     this.localStorageService.getUserNickname() ?? ''
   ];
   
@@ -30,7 +30,11 @@ export class GeneralKnowledgeComponent {
     });
 
     this.socket.fromEvent('user-entered-room').subscribe((nickname: any) => {
-      this.participants.push(nickname);
+      this.participantsNickname.push(nickname);
+    });
+
+    this.socket.fromEvent('leaving').subscribe((socketId: any) => {
+      console.log('Socket desconectando:', socketId);
     });
   }
 }

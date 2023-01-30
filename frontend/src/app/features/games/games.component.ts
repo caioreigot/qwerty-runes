@@ -1,6 +1,7 @@
 import { LocalStorageService } from './../../shared/services/local-storage.service';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-games',
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
 export class GamesComponent {
   
   constructor(
+    private socket: Socket,
     private localStorageService: LocalStorageService,
     private router: Router
   ) {}
@@ -19,6 +21,7 @@ export class GamesComponent {
   }
 
   logout() {
+    this.socket.emit('disconnect-me', this.localStorageService.getUserNickname());
     this.localStorageService.clearToken();
     this.router.navigate(['/']);
   }
