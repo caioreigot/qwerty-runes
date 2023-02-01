@@ -2,6 +2,10 @@ import { LocalStorageService } from './../../../shared/services/local-storage.se
 import { Component } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
+interface GeneralKnowledgeState {
+  scoreboard: { nickname: string, score: number }[]
+}
+
 @Component({
   selector: 'app-general-knowledge',
   templateUrl: './general-knowledge.component.html',
@@ -10,9 +14,9 @@ import { Socket } from 'ngx-socket-io';
 export class GeneralKnowledgeComponent {
 
   roomCode: string = '';
-  participantsNickname: string[] = [
-    this.localStorageService.getUserNickname() ?? ''
-  ];
+  gameState: GeneralKnowledgeState = {
+    scoreboard: []
+  }
   
   constructor(
     private socket: Socket,
@@ -21,7 +25,9 @@ export class GeneralKnowledgeComponent {
     this.subscribeToSocketEvents();
     
     const miniGameType = window.location.href.split("/").pop();
-    this.socket.emit('create-room', miniGameType);
+    this.socket.emit('create-room', {
+      nickname: this.localStorageService.getUserNickname(), miniGameType
+    });
   }
 
   subscribeToSocketEvents() {
@@ -29,12 +35,8 @@ export class GeneralKnowledgeComponent {
       this.roomCode = roomCode;
     });
 
-    this.socket.fromEvent('user-entered-room').subscribe((nickname: any) => {
-      this.participantsNickname.push(nickname);
-    });
-
-    this.socket.fromEvent('leaving').subscribe((socketId: any) => {
-      console.log('Socket desconectando:', socketId);
+    this.socket.fromEvent('state-changed').subscribe((newState: any) => {
+      this.gameState = newState;
     });
   }
 }

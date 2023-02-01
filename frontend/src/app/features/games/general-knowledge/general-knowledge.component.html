@@ -1,12 +1,13 @@
 <div class="left-side">
   <span>Placeholder para a pergunta</span>
   <app-general-knowledge-board class="board" />
-  <input type="text">
+  <input type="text" class="answer-input" placeholder="Digite aqui sua resposta">
 </div>
 
 <div class="right-side">
   <span class="room-code">Código da sala: {{ roomCode }}</span>
-  <app-player-score-card *ngFor="let nickname of participantsNickname"
-  class="player-score-card"
-  [nickname]="nickname" />
+  <app-player-score-card *ngFor="let scoreboardItem of gameState.scoreboard"
+    class="player-score-card"
+    [nickname]="scoreboardItem.nickname"
+    [score]="scoreboardItem.score" />
 </div>

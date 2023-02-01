@@ -1,3 +1,7 @@
+import {
+  GeneralKnowledgeGamePublicState,
+  GeneralKnowledgeGameState,
+} from './../models/general-knowledge';
 import * as randomstring from 'randomstring';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
@@ -30,13 +34,33 @@ export class GameRoomsService {
       .toUpperCase();
   }
 
-  createRoom(server: Server, hostSocket: Socket, miniGameType: MiniGameType) {
+  createRoom(
+    server: Server,
+    hostSocket: Socket,
+    hostNickname: string,
+    miniGameType: MiniGameType,
+  ) {
     let iterations = 0;
 
     const joinRoomAndEmitCode = (roomCode: string) => {
+      const newMiniGameRoom: MiniGameRoom = (function () {
+        switch (miniGameType) {
+          case MiniGameType.GENERAL_KNOWLEDGE:
+            const gameState = new GeneralKnowledgeGameState(hostNickname);
+            gameState.public.scoreboard.push({
+              nickname: hostNickname,
+              score: 0,
+            });
+
+            return new MiniGameRoom(roomCode, miniGameType, gameState);
+        }
+      })();
+
+      GameRoomsService.rooms.push(newMiniGameRoom);
+
       hostSocket.join(roomCode);
-      GameRoomsService.rooms.push({ code: roomCode, miniGameType });
       hostSocket.emit('room-code', roomCode);
+      hostSocket.emit('state-changed', newMiniGameRoom.state.public);
     };
 
     while (true) {
@@ -69,8 +93,28 @@ export class GameRoomsService {
   // Faz o socket entrar em uma sala e emite o evento passando o nome do jogador que entrou
   joinRoom(socket: Socket, nickname: string, roomCode: string) {
     const roomCodeFormatted = roomCode.toUpperCase();
+
+    const targetRoom = GameRoomsService.rooms.find((room) => {
+      return room.code === roomCode;
+    });
+
+    if (!targetRoom) {
+      socket.emit('error', `Esta sala não existe.`);
+      return;
+    }
+
+    for (let j = 0; j < targetRoom.state.public.players.length; j++) {
+      const currentNickname = targetRoom.state.public.players[j];
+
+      if (nickname === currentNickname) {
+        socket.emit('error', `Você já está conectado na sala.`);
+        return;
+      }
+    }
+
+    targetRoom.state.public.players.push(nickname);
     socket.join(roomCodeFormatted);
-    socket.to(roomCodeFormatted).emit('user-entered-room', nickname);
+    socket.emit('state-changed', targetRoom.state.public);
   }
 
   exitRoomsWhenDisconnecting(socket: Socket) {

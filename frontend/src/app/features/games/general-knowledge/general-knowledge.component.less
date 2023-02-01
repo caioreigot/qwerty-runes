@@ -27,11 +27,22 @@
     flex-grow: 1;
   }
 
-  input {
+  .answer-input {
+    font-family: @varela;
     text-align: center;
     height: 50px;
     padding: 5px 15px;
     font-size: 1.4rem;
+    border: 0;
+    color: @dark;
+
+    &:focus {
+      outline: 0;
+    }
+
+    &:focus::placeholder {
+      color: transparent;
+    }
   }
 }
 

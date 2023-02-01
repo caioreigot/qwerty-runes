@@ -7,6 +7,6 @@ import { Component, Input } from '@angular/core';
 })
 export class PlayerScoreCardComponent {
   
-  @Input() score = 0;
   @Input() nickname = 'Desconhecido';
+  @Input() score = 0;
 }
