@@ -3,8 +3,9 @@ import { Component } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
 interface GeneralKnowledgeState {
-  scoreboard: { nickname: string, score: number }[]
-}
+  players: string[];
+  scoreboard: { nickname: string, score: number }[];
+} 
 
 @Component({
   selector: 'app-general-knowledge',
@@ -13,9 +14,10 @@ interface GeneralKnowledgeState {
 })
 export class GeneralKnowledgeComponent {
 
-  roomCode: string = '';
+  roomCode = '';
   gameState: GeneralKnowledgeState = {
-    scoreboard: []
+    players: [],
+    scoreboard: [],
   }
   
   constructor(

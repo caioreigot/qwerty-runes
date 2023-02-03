@@ -4,12 +4,14 @@ import { NgModule } from '@angular/core';
 import { GamesComponent } from './games.component';
 import { LobbyComponent } from './lobby/lobby.component';
 import { GeneralKnowledgeComponent } from './general-knowledge/general-knowledge.component';
+import { AddGeneralKnowledgeComponent } from './add-general-knowledge/add-general-knowledge.component';
 
 @NgModule({
   declarations: [
     GamesComponent,
     LobbyComponent,
-    GeneralKnowledgeComponent
+    GeneralKnowledgeComponent,
+    AddGeneralKnowledgeComponent
   ],
   imports: [
     SharedModule,

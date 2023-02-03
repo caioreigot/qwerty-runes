@@ -1,0 +1,14 @@
+<form #form>
+  <label for="type-of-question">
+    Selecione o tipo da questão que será enviada (se será para adivinhar algo sobre uma imagem, uma música ou apenas um texto)
+  </label>
+  <select id="type-of-question">
+    <option value="image">Imagem</option>
+    <option value="text">Texto</option>
+    <option value="music">Música</option>
+  </select>
+  <input type="text" placeholder="Pergunta">
+  <input #fileInput type="file" accept=".jpg,.jpeg,.png">
+  <img #image>
+  <button type="submit">Enviar</button>
+</form>

@@ -30,4 +30,14 @@ export class PrismaUserRepository implements UserRepository {
       },
     });
   }
+
+  async isAdmin(nickname: string): Promise<boolean> {
+    const user = await this.prisma.user.findFirstOrThrow({
+      where: {
+        nickname: nickname,
+      },
+    });
+
+    return user.isAdmin;
+  }
 }

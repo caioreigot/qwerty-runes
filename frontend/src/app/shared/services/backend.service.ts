@@ -10,14 +10,12 @@ export class BackendService {
     user: {
       login: 'user/login',
       loginWithToken: 'user/token-login',
-      create: 'user/create'
+      create: 'user/create',
+      isAdmin: 'user/is-admin'
     }
   } 
 
-  constructor(
-    private http: HttpClient,
-    private localStorageService: LocalStorageService,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   createUser(nickname: string, password: string) {
     const body = { nickname, password };
@@ -30,15 +28,10 @@ export class BackendService {
   }
 
   useTokenToValidateAuthentication(): Observable<void | HttpErrorResponse> {
-    const token = this.localStorageService.getToken() || '';
+    return this.http.get<void | HttpErrorResponse>(this.endpoints.user.loginWithToken);
+  }
 
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    })
-
-    return this.http.get<void | HttpErrorResponse>(
-      this.endpoints.user.loginWithToken, { headers }
-    );
+  isUserAdmin(): Observable<boolean> {
+    return this.http.get<boolean>(this.endpoints.user.isAdmin);
   }
 }

@@ -10,6 +10,7 @@ import { CoreModule } from './core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { GamesModule } from './features/games/games.module';
 import { LoginModule } from './features/login/login.module';
+import { AdminComponent } from './features/admin/admin.component';
 
 const backendUrl = isDevMode() ? 'http://localhost:3000' : document.location.host;
 const socketConfig: SocketIoConfig = { url: backendUrl, options: {} };
@@ -17,6 +18,7 @@ const socketConfig: SocketIoConfig = { url: backendUrl, options: {} };
 @NgModule({
   declarations: [
     AppComponent,
+    AdminComponent,
   ],
   imports: [
     BrowserModule,

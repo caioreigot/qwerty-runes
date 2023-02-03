@@ -16,5 +16,9 @@ export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePub
 
   constructor(hostNickname: string) {
     super(new GeneralKnowledgeGamePublicState(hostNickname));
+    this.public.scoreboard.push({
+      nickname: hostNickname,
+      score: 0,
+    });
   }
 }

@@ -1,8 +1,5 @@
-import {
-  GeneralKnowledgeGamePublicState,
-  GeneralKnowledgeGameState,
-} from './../models/general-knowledge';
 import * as randomstring from 'randomstring';
+import { GeneralKnowledgeGameState } from './../models/general-knowledge';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { MiniGameRoom, MiniGameType } from 'src/models/mini-game';
@@ -47,11 +44,6 @@ export class GameRoomsService {
         switch (miniGameType) {
           case MiniGameType.GENERAL_KNOWLEDGE:
             const gameState = new GeneralKnowledgeGameState(hostNickname);
-            gameState.public.scoreboard.push({
-              nickname: hostNickname,
-              score: 0,
-            });
-
             return new MiniGameRoom(roomCode, miniGameType, gameState);
         }
       })();

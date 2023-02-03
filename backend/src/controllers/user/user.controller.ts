@@ -1,6 +1,7 @@
 import { AuthService } from 'src/auth/shared/auth.service';
 import { LocalAuthGuard } from 'src/auth/shared/local-auth.guard';
 import { JwtAuthGuard } from 'src/auth/shared/jwt-auth.guard';
+import jwt_decode from 'jwt-decode';
 import {
   Body,
   Controller,
@@ -50,5 +51,14 @@ export class UserController {
   @Get('token-login')
   hasToken(): void {
     return;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('is-admin')
+  async isAdmin(@Req() request: any): Promise<boolean> {
+    const token = request.headers.authorization.split(' ')[1];
+    const payload: any = jwt_decode(token);
+    const nickname = payload.nickname;
+    return this.userRepository.isAdmin(nickname);
   }
 }

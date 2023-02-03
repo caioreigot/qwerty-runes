@@ -15,7 +15,7 @@ export class GameGateway implements OnGatewayInit {
 
   constructor(private gameRoomsService: GameRoomsService) {}
 
-  afterInit(server: any) {
+  afterInit(server: Server) {
     this.gameRoomsService.startCleaningEmptyRoomsRoutine(server);
   }
 
