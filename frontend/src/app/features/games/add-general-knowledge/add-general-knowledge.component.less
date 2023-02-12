@@ -12,9 +12,45 @@ form {
     text-align: justify;
   }
 
-  img {
-    width: 100%;
-    height: 400px;
-    object-fit: contain;
+  #type-of-question,
+  .question-input {
+    padding: 6px;
+  }
+
+  .file-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    img {
+      width: 100%;
+      height: 400px;
+      object-fit: contain;
+    }
+
+    input {
+      color: @light;
+    }
+  }
+
+  textarea {
+    padding: 10px;
+    resize: vertical;
+  }
+
+  button[type="submit"] {
+    padding: 5px;
+    font-size: 1rem;
+    background-color: @light;
+    color: @dark;
+    border: 0;
+
+    &:hover {
+      filter: brightness(95%);
+    }
+
+    &:active {
+      filter: brightness(90%);
+    }
   }
 }

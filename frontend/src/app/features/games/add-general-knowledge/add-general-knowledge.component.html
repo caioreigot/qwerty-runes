@@ -2,13 +2,21 @@
   <label for="type-of-question">
     Selecione o tipo da questão que será enviada (se será para adivinhar algo sobre uma imagem, uma música ou apenas um texto)
   </label>
-  <select id="type-of-question">
-    <option value="image">Imagem</option>
+  <select #typeOfQuestion id="type-of-question">
     <option value="text">Texto</option>
+    <option value="image">Imagem</option>
     <option value="music">Música</option>
   </select>
-  <input type="text" placeholder="Pergunta">
-  <input #fileInput type="file" accept=".jpg,.jpeg,.png">
-  <img #image>
+
+  <input #questionInput class="question-input" type="text" placeholder="Título da pergunta">
+  
+  <div class="file-input-container" [class.hidden]="!(isImageQuestion | async)">
+    <label for="file-input">Escolha a imagem (no máximo 1mb):</label>
+    <input #fileInput id="file-input" type="file" accept=".jpg,.jpeg,.png">
+    <img #image>
+  </div>
+
+  <textarea placeholder="Conteúdo referente à pergunta" #textArea rows="10" [class.hidden]="isImageQuestion | async"></textarea>
+
   <button type="submit">Enviar</button>
 </form>

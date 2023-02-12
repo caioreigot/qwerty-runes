@@ -1,7 +1,7 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { GeneralKnowledgeQuestionType } from './../../core/models/GeneralKnowledgeQuestionType';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from './local-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class BackendService {
@@ -12,6 +12,9 @@ export class BackendService {
       loginWithToken: 'user/token-login',
       create: 'user/create',
       isAdmin: 'user/is-admin'
+    },
+    generalKnowledge: {
+      add: 'general-knowledge/add'
     }
   } 
 
@@ -33,5 +36,17 @@ export class BackendService {
 
   isUserAdmin(): Observable<boolean> {
     return this.http.get<boolean>(this.endpoints.user.isAdmin);
+  }
+
+  addGeneralKnowledge(
+    questionTitle: string,
+    type: GeneralKnowledgeQuestionType,
+    content: any
+  ) {
+    return this.http.post(this.endpoints.generalKnowledge.add, {
+      questionTitle,
+      type,
+      content
+    });
   }
 }

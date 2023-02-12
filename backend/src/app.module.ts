@@ -7,6 +7,7 @@ import { PrismaUserRepository } from './repositories/prisma/prisma-user-reposito
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserController } from './controllers/user/user.controller';
 import { GatewaysModule } from './gateways/gateways.module';
+import { GeneralKnowledgeController } from './controllers/general-knowledge/general-knowledge.controller';
 
 const ConfiguredServeStaticModule = ServeStaticModule.forRoot({
   rootPath: join(__dirname, 'front'),
@@ -19,7 +20,7 @@ const UseUserRepositoryWithPrisma = {
 
 @Module({
   imports: [AuthModule, GatewaysModule, ConfiguredServeStaticModule],
-  controllers: [UserController],
+  controllers: [UserController, GeneralKnowledgeController],
   providers: [PrismaService, UseUserRepositoryWithPrisma],
   exports: [PrismaService],
 })
