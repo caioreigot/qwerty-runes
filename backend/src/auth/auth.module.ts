@@ -3,11 +3,11 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 
-import { PrismaService } from './../database/prisma.service';
+import { PrismaService } from '../database/prisma.service';
 import { AuthService } from './shared/auth.service';
 import { LocalStrategyService } from './shared/local-strategy.service';
-import { UserRepository } from 'src/repositories/user-repository';
-import { PrismaUserRepository } from 'src/repositories/prisma/prisma-user-repository';
+import { UserRepository } from '../repositories/user-repository';
+import { PrismaUserRepository } from '../repositories/prisma/prisma-user-repository';
 import { JwtStrategy } from './shared/jwt.strategy';
 
 @Module({

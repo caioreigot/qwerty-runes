@@ -1,8 +1,8 @@
 import * as randomstring from 'randomstring';
-import { GeneralKnowledgeGameState } from './../models/general-knowledge';
+import { GeneralKnowledgeGameState } from '../models/general-knowledge';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { MiniGameRoom, MiniGameType } from 'src/models/mini-game';
+import { MiniGameRoom, MiniGameType } from '../models/mini-game';
 
 @Injectable()
 export class GameRoomsService {

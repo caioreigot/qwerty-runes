@@ -5,8 +5,8 @@ export enum MiniGameType {
 /* Cada mini-jogo tem seu próprio state público (aquilo que é passado para o front-end
 para que ele possa renderizar as informações na tela), o resto fica apenas do lado do servidor
 
-Cada mini-jogo terá seu próprio PublicState, portanto, é necessário criar uma nova classe
-e extendar a PublicState para então criar o GameState */
+Cada mini-jogo (GameState) terá seu próprio PublicState, portanto, é necessário criar uma nova
+classe e extendar a PublicState para então criar o GameState */
 export class PublicState {
   players: string[];
 

@@ -22,3 +22,8 @@ export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePub
     });
   }
 }
+
+export enum GeneralKnowledgeQuestionType {
+  IMAGE = 'image',
+  TEXT = 'text',
+}

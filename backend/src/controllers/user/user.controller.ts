@@ -1,7 +1,6 @@
-import { AuthService } from 'src/auth/shared/auth.service';
-import { LocalAuthGuard } from 'src/auth/shared/local-auth.guard';
-import { JwtAuthGuard } from 'src/auth/shared/jwt-auth.guard';
-import jwt_decode from 'jwt-decode';
+import { AuthService } from '../../auth/shared/auth.service';
+import { LocalAuthGuard } from '../../auth/shared/local-auth.guard';
+import { JwtAuthGuard } from '../../auth/shared/jwt-auth.guard';
 import {
   Body,
   Controller,
@@ -15,12 +14,15 @@ import {
 import { Prisma } from '@prisma/client';
 import { UserBody } from 'src/dtos/user-body';
 import { UserRepository } from 'src/repositories/user-repository';
+import { Request } from 'express';
+import { UtilsService } from '../shared/utils.service';
 
 @Controller('user')
 export class UserController {
   constructor(
     private userRepository: UserRepository,
     private authService: AuthService,
+    private utilsService: UtilsService,
   ) {}
 
   @Post('create')
@@ -55,9 +57,8 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get('is-admin')
-  async isAdmin(@Req() request: any): Promise<boolean> {
-    const token = request.headers.authorization.split(' ')[1];
-    const payload: any = jwt_decode(token);
+  async isAdmin(@Req() request: Request): Promise<boolean> {
+    const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
     const nickname = payload.nickname;
     return this.userRepository.isAdmin(nickname);
   }

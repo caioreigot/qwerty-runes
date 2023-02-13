@@ -1,7 +1,7 @@
 import { BackendService } from './../../shared/services/backend.service';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { catchError, Observable, of } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AdminGuard implements CanActivate {
@@ -10,19 +10,23 @@ export class AdminGuard implements CanActivate {
     private router: Router,
     private backendService: BackendService
   ) {}
+
+  onError(observer: Subscriber<boolean>) {
+    observer.next(false);
+    this.router.navigate(['/']);
+  }
+
+  onComplete(observer: Subscriber<boolean>, isAdmin: boolean) {
+    observer.next(isAdmin);
+    if (!isAdmin) this.router.navigate(['/']);
+  }
   
   canActivate() {
     return new Observable<boolean>((observer) => {
-      this.backendService.isUserAdmin()
-        .pipe(catchError(() => {
-          observer.next(false);
-          this.router.navigate(['/']);
-          return of();
-        }))
-        .subscribe((isAdmin) => {
-          observer.next(isAdmin);
-          if (!isAdmin) this.router.navigate(['/']);
-        });
+      this.backendService.isUserAdmin().subscribe({
+        error: () => this.onError(observer),
+        next: (isAdmin) => this.onComplete(observer, isAdmin)
+      });
     })
   }
 }

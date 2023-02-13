@@ -1,8 +1,9 @@
-import { GeneralKnowledgeQuestionType } from './../../../core/models/GeneralKnowledgeQuestionType';
+import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { SnackbarService } from './../../../shared/services/snackbar.service';
+import { GeneralKnowledgeQuestionType } from '../../../core/models/GeneralKnowledgeQuestionType';
+import { SnackbarService } from '../../../shared/services/snackbar.service';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { BackendService } from 'src/app/shared/services/backend.service';
+import { BackendService } from '../../../shared/services/backend.service';
 
 @Component({
   selector: 'app-add-general-knowledge',
@@ -54,7 +55,7 @@ export class AddGeneralKnowledgeComponent implements AfterViewInit {
       }
 
       if (file.size > 1 * 1024 * 1024) {
-        this.snackbarService.showMessage('Imagens maiores que 1mb não podem ser enviadas.', true);
+        this.snackbarService.showMessage('Imagens maiores que 1 MB não podem ser enviadas.', true);
         return;
       }
 
@@ -76,23 +77,22 @@ export class AddGeneralKnowledgeComponent implements AfterViewInit {
       event.preventDefault();
       
       const typeOfQuestion = this.typeOfQuestionInput?.nativeElement.value as GeneralKnowledgeQuestionType;
-      const questionTitle = this.questionInput?.nativeElement.value;
-      const content = this.textArea?.nativeElement.value;
-      
-      // Se o título da pergunta estiver vazio ou o tipo da pergunta não for uma imagem e não houver um conteúdo
-      if (!questionTitle || (typeOfQuestion !== GeneralKnowledgeQuestionType.image && !content)) {
-        this.snackbarService.showMessage('Por favor, preencha todos os campos.', true);
-        return;
-      }
+      const questionTitle = this.questionInput?.nativeElement.value ?? '';
+      const content = this.textArea?.nativeElement.value ?? '';
 
       this.backendService.addGeneralKnowledge(
         questionTitle,
         typeOfQuestion,
-        typeOfQuestion === GeneralKnowledgeQuestionType.image 
-          ? this.imageBase64
-          : content
-      ).subscribe(() => {
-        this.snackbarService.showMessage('Dados enviados com sucesso! Obrigado pela contribuição.');
+        typeOfQuestion === GeneralKnowledgeQuestionType.IMAGE ? this.imageBase64 : content
+      ).subscribe({
+        error: (response: HttpErrorResponse) => {
+          const message: any = response.error.message;
+          if (!message) return;
+
+          const errorMessage = message instanceof Array ? message[0] : message;
+          this.snackbarService.showMessage(errorMessage, true);
+        },
+        complete: () => this.snackbarService.showMessage('Dados enviados com sucesso. Obrigado pela contribuição!')
       });
     }
 

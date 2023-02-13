@@ -1,22 +1,35 @@
 <form #form>
+  <h1>Adicione sua própria pergunta ao mini-jogo de conhecimento geral</h1>
+
   <label for="type-of-question">
-    Selecione o tipo da questão que será enviada (se será para adivinhar algo sobre uma imagem, uma música ou apenas um texto)
+    Selecione o tipo da questão que será enviada (se será para adivinhar algo sobre o texto ou uma imagem):
   </label>
   <select #typeOfQuestion id="type-of-question">
     <option value="text">Texto</option>
     <option value="image">Imagem</option>
-    <option value="music">Música</option>
   </select>
 
-  <input #questionInput class="question-input" type="text" placeholder="Título da pergunta">
-  
-  <div class="file-input-container" [class.hidden]="!(isImageQuestion | async)">
-    <label for="file-input">Escolha a imagem (no máximo 1mb):</label>
+  <label for="question-input" class="margin-top-12">
+    Escreva a pergunta (aquela que aparece no topo da tela, exemplo: "{{ typeOfQuestion.value === 'image'
+      ? "A que série pertence este personagem?"
+      : "Em qual série é dito a seguinte frase?"
+    }}"):
+  </label>
+  <input #questionInput id="question-input" type="text" placeholder="Título da pergunta">
+
+  <div class="file-input-container margin-top-12" [class.hidden]="!(isImageQuestion | async)">
+    <label for="file-input">Escolha a imagem (no máximo 1 MB):</label>
     <input #fileInput id="file-input" type="file" accept=".jpg,.jpeg,.png">
     <img #image>
   </div>
 
-  <textarea placeholder="Conteúdo referente à pergunta" #textArea rows="10" [class.hidden]="isImageQuestion | async"></textarea>
+  <div class="content-container margin-top-12" [class.hidden]="isImageQuestion | async">
+    <label for="textarea">
+      Escreva o conteúdo da pergunta (o que precisará ser adivinhado, exemplo: "I am not in danger, Skyler. I am the danger."):
+    </label>
+    <textarea placeholder="Conteúdo referente à pergunta (escreva aqui o que será preciso adivinhar)" #textArea id="textarea" rows="10"></textarea>  
+  </div>
 
   <button type="submit">Enviar</button>
+  <span class="obs">(obs.: sua questão só aparecerá no mini-jogo assim que for aprovada pela moderação)</span>
 </form>

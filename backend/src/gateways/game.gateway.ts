@@ -6,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 
 import { Server, Socket } from 'socket.io';
-import { MiniGameType } from 'src/models/mini-game';
+import { MiniGameType } from '../models/mini-game';
 import { GameRoomsService } from './game-rooms.service';
 
 @WebSocketGateway({ cors: true })

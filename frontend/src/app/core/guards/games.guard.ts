@@ -1,4 +1,4 @@
-import { Observable, of, tap, catchError } from 'rxjs';
+import { Observable, of, tap, catchError, Subscriber } from 'rxjs';
 import { BackendService } from './../../shared/services/backend.service';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
@@ -11,15 +11,21 @@ export class GamesGuard implements CanActivate {
     private backendService: BackendService
   ) {}
 
+  onError(observer: Subscriber<boolean>) {
+    observer.next(false);
+    this.router.navigate(['/']);
+  }
+
+  onComplete(observer: Subscriber<boolean>) {
+    observer.next(true);
+  }
+
   canActivate() {
     return new Observable<boolean>((observer) => {
-      this.backendService.useTokenToValidateAuthentication()
-        .pipe(catchError(() => {
-          observer.next(false);
-          this.router.navigate(['/']);
-          return of();
-        }))
-        .subscribe(() => observer.next(true));
+      this.backendService.useTokenToValidateAuthentication().subscribe({
+        error: () => this.onError(observer),
+        complete: () => this.onComplete(observer)
+      });
     })
   }
 }
