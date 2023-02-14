@@ -1,7 +1,7 @@
 import { BackendService } from './../../shared/services/backend.service';
 import { LocalStorageService } from './../../shared/services/local-storage.service';
 import { SnackbarService } from './../../shared/services/snackbar.service';
-import { Component, ElementRef, isDevMode, ViewChild } from '@angular/core';
+import { Component, ElementRef, isDevMode, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, of, map } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,7 +11,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.less']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 
   @ViewChild('loadingModal') loadingModal: ElementRef | null = null;
   @ViewChild('rememberCheckbox') rememberCheckbox: ElementRef | null = null;
@@ -24,7 +24,9 @@ export class LoginComponent {
     private localStorageService: LocalStorageService,
     private backendService: BackendService,
     private route: Router
-  ) {
+  ) {}
+
+  ngOnInit() {
     // Se estiver com um token ainda não expirado, logue diretamente
     this.backendService.useTokenToValidateAuthentication().subscribe({
       error: () => this.loadingModal?.nativeElement.remove(),

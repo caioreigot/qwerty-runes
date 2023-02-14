@@ -21,7 +21,7 @@ export class GamesComponent {
   }
 
   logout() {
-    this.socket.emit('disconnect-me', this.localStorageService.getUserNickname());
+    this.socket.emit('exit', this.localStorageService.getUserNickname());
     this.localStorageService.clearToken();
     this.router.navigate(['/']);
   }

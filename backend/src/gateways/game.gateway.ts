@@ -36,11 +36,16 @@ export class GameGateway implements OnGatewayInit {
   @SubscribeMessage('enter-room')
   enterRoom(client: Socket, data: { nickname: string; roomCode: string }) {
     this.gameRoomsService.exitRoomsWhenDisconnecting(client);
-    this.gameRoomsService.joinRoom(client, data.nickname, data.roomCode);
+    this.gameRoomsService.joinRoom(
+      this.server,
+      client,
+      data.nickname,
+      data.roomCode,
+    );
   }
 
-  @SubscribeMessage('disconnect-me')
-  disconnectMe(client: Socket) {
-    client.disconnect();
+  @SubscribeMessage('exit')
+  exit(client: Socket) {
+    this.gameRoomsService.leaveAllRooms(client);
   }
 }

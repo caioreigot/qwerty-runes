@@ -1,7 +1,7 @@
 import * as randomstring from 'randomstring';
-import { GeneralKnowledgeGameState } from '../models/general-knowledge';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { GeneralKnowledgeGameState } from '../models/general-knowledge';
 import { MiniGameRoom, MiniGameType } from '../models/mini-game';
 
 @Injectable()
@@ -43,7 +43,11 @@ export class GameRoomsService {
       const newMiniGameRoom: MiniGameRoom = (function () {
         switch (miniGameType) {
           case MiniGameType.GENERAL_KNOWLEDGE:
-            const gameState = new GeneralKnowledgeGameState(hostNickname);
+            const gameState = new GeneralKnowledgeGameState(
+              hostNickname,
+              hostSocket.id,
+            );
+
             return new MiniGameRoom(roomCode, miniGameType, gameState);
         }
       })();
@@ -83,36 +87,59 @@ export class GameRoomsService {
   }
 
   // Faz o socket entrar em uma sala e emite o evento passando o nome do jogador que entrou
-  joinRoom(socket: Socket, nickname: string, roomCode: string) {
-    const roomCodeFormatted = roomCode.toUpperCase();
+  joinRoom(
+    server: Server,
+    socket: Socket,
+    nickname: string,
+    roomCodeArg: string,
+  ) {
+    const roomCode = roomCodeArg.toUpperCase();
 
-    const targetRoom = GameRoomsService.rooms.find((room) => {
-      return room.code === roomCode;
-    });
+    const targetRoom = GameRoomsService.rooms.find(
+      (room) => room.code === roomCode,
+    );
 
     if (!targetRoom) {
-      socket.emit('error', `Esta sala não existe.`);
+      socket.emit('error', 'Esta sala não existe.');
       return;
     }
 
     for (let j = 0; j < targetRoom.state.public.players.length; j++) {
-      const currentNickname = targetRoom.state.public.players[j];
+      const currentNickname = targetRoom.state.public.players[j].nickname;
 
       if (nickname === currentNickname) {
-        socket.emit('error', `Você já está conectado na sala.`);
+        socket.emit('error', 'Você já está conectado na sala.');
         return;
       }
     }
 
-    targetRoom.state.public.players.push(nickname);
-    socket.join(roomCodeFormatted);
-    socket.emit('state-changed', targetRoom.state.public);
+    targetRoom.state.public.players.push({ nickname, socketId: socket.id });
+
+    if (targetRoom.state instanceof GeneralKnowledgeGameState) {
+      targetRoom.state.public.scoreboard.push({ nickname, score: 0 });
+    }
+
+    socket.join(roomCode);
+    socket.emit('entered-room');
+
+    server.to(roomCode).emit('state-changed', targetRoom.state.public);
   }
 
   exitRoomsWhenDisconnecting(socket: Socket) {
     socket.on('disconnecting', () => {
-      socket.rooms.forEach((room) => {
-        socket.to(room).emit('leaving', socket.id);
+      this.leaveAllRooms(socket);
+    });
+  }
+
+  leaveAllRooms(socket: Socket) {
+    GameRoomsService.rooms.forEach((room) => {
+      room.state.public.players.forEach((player) => {
+        // Se não for o player que está desconectando, retorna e vai pra proxima iteração
+        if (player.socketId !== socket.id) return;
+
+        // Desconecta o jogador e manda o novo estado para o frontend
+        room.state.public.disconnectPlayer(player);
+        socket.to(room.code).emit('state-changed', room.state.public);
       });
     });
   }
