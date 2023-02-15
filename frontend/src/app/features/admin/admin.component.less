@@ -1,0 +1,65 @@
+@import "/src/app/core/variables.less";
+
+:host {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  color: @light;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  width: 25%;
+  max-width: 500px;
+  height: 100%;
+  overflow: hidden;
+
+  border: 2px solid @light;
+
+  .back {
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+
+    &:hover {
+      filter: brightness(90%);
+    }
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    user-select: none;
+  }
+
+  a {
+    width: 100%;
+    text-align: center;
+    padding: 8px 5px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    color: @light;
+
+    &:hover {
+      cursor: pointer;
+      background-color: @light;
+      color: @primary;
+    }
+
+    &.active {
+      background-color: darken(@light, 4%);
+      color: @primary;
+    }
+  }
+}

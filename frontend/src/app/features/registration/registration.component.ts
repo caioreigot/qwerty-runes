@@ -1,8 +1,8 @@
-import { BackendService } from './../../shared/services/backend.service';
-import { SnackbarService } from './../../shared/services/snackbar.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { BackendService } from '../../shared/services/backend.service';
+import { SnackbarService } from '../../shared/services/snackbar.service';
 
 @Component({
   selector: 'app-registration',

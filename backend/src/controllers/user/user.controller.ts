@@ -9,12 +9,13 @@ import {
   HttpStatus,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { UserBody } from 'src/dtos/user-body';
 import { UserRepository } from 'src/repositories/user-repository';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { UtilsService } from '../shared/utils.service';
 
 @Controller('user')
@@ -59,7 +60,34 @@ export class UserController {
   @Get('is-admin')
   async isAdmin(@Req() request: Request): Promise<boolean> {
     const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
-    const nickname = payload.nickname;
-    return this.userRepository.isAdmin(nickname);
+    return this.userRepository.isAdmin(payload.nickname);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('get-all-admin-nicknames')
+  async getAllAdminNicknames(): Promise<string[]> {
+    return this.userRepository.getAllAdminNicknames();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('remove-admin')
+  async removeAdmin(@Req() request: Request): Promise<{ nickname: string }> {
+    const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
+    const isUserAdmin = this.userRepository.isAdmin(payload.nickname);
+
+    if (!isUserAdmin) return;
+
+    return this.userRepository.removeAdmin(request.body.nickname);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('add-admin')
+  async addAdmin(@Req() request: Request): Promise<{ nickname: string }> {
+    const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
+    const isUserAdmin = this.userRepository.isAdmin(payload.nickname);
+
+    if (!isUserAdmin) return;
+
+    return this.userRepository.addAdmin(request.body.nickname);
   }
 }

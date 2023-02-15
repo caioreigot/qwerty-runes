@@ -1,5 +1,18 @@
 @import "/src/app/core/variables.less";
 
+.back {
+  cursor: pointer;
+  width: 45px;
+  height: 45px;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+
+  &:hover {
+    filter: brightness(90%);
+  }
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -24,7 +37,7 @@ form {
     padding: 6px;
   }
 
-  .margin-top-12 {
+  .mt-12 {
     margin-top: 12px;
   }
 
@@ -45,7 +58,8 @@ form {
     }
   }
 
-  .content-container {
+  .content-container,
+  .acceptable-answers-container {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -56,7 +70,7 @@ form {
     resize: vertical;
   }
 
-  button[type="submit"] {
+  .send {
     padding: 5px;
     font-size: 1rem;
     background-color: @light;

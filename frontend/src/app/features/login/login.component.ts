@@ -1,10 +1,9 @@
-import { BackendService } from './../../shared/services/backend.service';
-import { LocalStorageService } from './../../shared/services/local-storage.service';
-import { SnackbarService } from './../../shared/services/snackbar.service';
-import { Component, ElementRef, isDevMode, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, of, map } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { BackendService } from '../../shared/services/backend.service';
+import { LocalStorageService } from '../../shared/services/local-storage.service';
+import { SnackbarService } from '../../shared/services/snackbar.service';
 
 @Component({
   selector: 'app-login',

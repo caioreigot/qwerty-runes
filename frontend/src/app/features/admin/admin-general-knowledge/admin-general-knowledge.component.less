@@ -1,0 +1,65 @@
+@import "/src/app/core/variables.less";
+
+:host {
+  .flex-all-center();
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  gap: 10px;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+
+  label {
+    margin-top: 10px;
+    margin-bottom: 2px;
+  }
+
+  input, textarea {
+    padding: 10px;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  > .container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  max-width: 600px;
+  gap: 5px;
+
+  .approve {
+    background-color: #36b477;
+  }
+
+  .reject {
+    background-color: #de4040;
+  }
+
+  button {
+    cursor: pointer;
+    text-transform: uppercase;
+    padding: 15px 50px;
+    color: @light;
+    font-weight: bold;
+    font-size: 1rem;
+    flex-grow: 1;
+    border: 0;
+    
+    &:hover { filter: brightness(105%); }
+    &:active { filter: brightness(95%); }
+  }
+}

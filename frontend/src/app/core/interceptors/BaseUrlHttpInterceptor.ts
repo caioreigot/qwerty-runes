@@ -1,7 +1,7 @@
-import { LocalStorageService } from './../../shared/services/local-storage.service';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpHeaders} from '@angular/common/http';
 import { isDevMode, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { LocalStorageService } from '../../shared/services/local-storage.service';
 
 @Injectable()
 export class BaseUrlHttpInterceptor implements HttpInterceptor {

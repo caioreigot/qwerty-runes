@@ -1,4 +1,4 @@
-import { BackendService } from './../../shared/services/backend.service';
+import { BackendService } from '../../shared/services/backend.service';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { Observable, Subscriber } from 'rxjs';

@@ -1,3 +1,4 @@
+import { AdministratorsComponent } from './features/admin/administrators/administrators.component';
 import { AdminGuard } from './core/guards/admin.guard';
 import { AdminComponent } from './features/admin/admin.component';
 import { GeneralKnowledgeComponent } from './features/games/general-knowledge/general-knowledge.component';
@@ -9,6 +10,7 @@ import { AddGeneralKnowledgeComponent } from './features/games/add-general-knowl
 import { LoginComponent } from './features/login/login.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminGeneralKnowledgeComponent } from './features/admin/admin-general-knowledge/admin-general-knowledge.component';
 
 const routes: Routes = [
   {
@@ -37,7 +39,17 @@ const routes: Routes = [
   {
     path: 'admin',
     component: AdminComponent,
-    canActivate: [AdminGuard]
+    canActivate: [AdminGuard],
+    children: [
+      {
+        path: 'administrators',
+        component: AdministratorsComponent
+      },
+      {
+        path: 'general-knowledge',
+        component: AdminGeneralKnowledgeComponent
+      }
+    ]
   },
   {
     path: '',

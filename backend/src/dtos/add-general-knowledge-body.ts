@@ -7,6 +7,10 @@ export class AddGeneralKnowledgeBody {
   @Transform(({ value }: TransformFnParams) => value?.trim())
   questionTitle: string;
 
+  @IsNotEmpty({ message: 'As respostas aceitáveis não podem estar vazias.' })
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  acceptableAnswers: string;
+
   @IsEnum(GeneralKnowledgeQuestionType)
   type: GeneralKnowledgeQuestionType;
 

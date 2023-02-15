@@ -1,7 +1,7 @@
-import { Observable, of, tap, catchError, Subscriber } from 'rxjs';
-import { BackendService } from './../../shared/services/backend.service';
+import { Observable, Subscriber } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
+import { BackendService } from '../../shared/services/backend.service';
 
 @Injectable({ providedIn: 'root' })
 export class GamesGuard implements CanActivate {

@@ -1,9 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { GeneralKnowledgeQuestionType } from '../../../core/models/GeneralKnowledgeQuestionType';
 import { SnackbarService } from '../../../shared/services/snackbar.service';
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { BackendService } from '../../../shared/services/backend.service';
+import { UtilsService } from '../../../shared/services/utils.service';
 
 @Component({
   selector: 'app-add-general-knowledge',
@@ -11,24 +11,15 @@ import { BackendService } from '../../../shared/services/backend.service';
   styleUrls: ['./add-general-knowledge.component.less']
 })
 export class AddGeneralKnowledgeComponent implements AfterViewInit {
-  
-  @ViewChild('form')
-  form: ElementRef<HTMLFormElement> | null = null;
 
-  @ViewChild('questionInput')
-  questionInput: ElementRef<HTMLInputElement> | null = null;
-  
-  @ViewChild('fileInput')
-  fileInput: ElementRef<HTMLInputElement> | null = null;
+  @ViewChild('typeOfQuestionSelect')
+  typeOfQuestionSelect: ElementRef<HTMLSelectElement> | null = null;
 
   @ViewChild('image')
   image: ElementRef<HTMLImageElement> | null = null;
-
-  @ViewChild('textArea')
-  textArea: ElementRef<HTMLTextAreaElement> | null = null;
-
-  @ViewChild('typeOfQuestion')
-  typeOfQuestionInput: ElementRef<HTMLInputElement> | null = null;
+  
+  @ViewChild('fileInput')
+  fileInput: ElementRef<HTMLInputElement> | null = null;
 
   imageBase64: string | null = null;
 
@@ -38,12 +29,31 @@ export class AddGeneralKnowledgeComponent implements AfterViewInit {
   constructor(
     private backendService: BackendService,
     private snackbarService: SnackbarService,
+    private utilsService: UtilsService
   ) {}
 
-  ngAfterViewInit(): void {
-    const form = this.form?.nativeElement;
-    if (!form) return;
+  onSubmit(
+    questionTitle: string,
+    typeOfQuestion: string,
+    contentTextAreaValue: string,
+    acceptableAnswers: string,
+  ) {
+    const content = typeOfQuestion === GeneralKnowledgeQuestionType.IMAGE 
+      ? this.imageBase64
+      : contentTextAreaValue
 
+    this.backendService.addGeneralKnowledge(
+      questionTitle,
+      typeOfQuestion as GeneralKnowledgeQuestionType,
+      content,
+      acceptableAnswers,
+    ).subscribe({
+      error: (response) => this.utilsService.handleResponseErrorAndShowInSnackbar(response),
+      complete: () => this.snackbarService.showMessage('Dados enviados com sucesso. Obrigado pela contribuição!')
+    });
+  }
+
+  ngAfterViewInit(): void {
     const fileInput = this.fileInput?.nativeElement!;
 
     fileInput.onchange = () => {
@@ -72,31 +82,8 @@ export class AddGeneralKnowledgeComponent implements AfterViewInit {
           image.src = base64 as string;
         })
     }
-    
-    form.onsubmit = (event) => {
-      event.preventDefault();
-      
-      const typeOfQuestion = this.typeOfQuestionInput?.nativeElement.value as GeneralKnowledgeQuestionType;
-      const questionTitle = this.questionInput?.nativeElement.value ?? '';
-      const content = this.textArea?.nativeElement.value ?? '';
-
-      this.backendService.addGeneralKnowledge(
-        questionTitle,
-        typeOfQuestion,
-        typeOfQuestion === GeneralKnowledgeQuestionType.IMAGE ? this.imageBase64 : content
-      ).subscribe({
-        error: (response: HttpErrorResponse) => {
-          const message: any = response.error.message;
-          if (!message) return;
-
-          const errorMessage = message instanceof Array ? message[0] : message;
-          this.snackbarService.showMessage(errorMessage, true);
-        },
-        complete: () => this.snackbarService.showMessage('Dados enviados com sucesso. Obrigado pela contribuição!')
-      });
-    }
-
-    this.typeOfQuestionInput?.nativeElement.addEventListener('change', (e) => {
+  
+    this.typeOfQuestionSelect?.nativeElement.addEventListener('change', (e) => {
       const input = e.target as HTMLInputElement;
       this._isImageQuestionSubject.next(input.value === 'image');
     });

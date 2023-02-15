@@ -18,9 +18,10 @@ model User {
 }
 
 model GeneralKnowledgeQuestion {
-  id            Int     @id @default(autoincrement())
-  questionTitle String
-  type          String
-  content       String
-  approved      Boolean @default(false)
+  id                Int     @id @default(autoincrement())
+  questionTitle     String
+  type              String
+  content           String
+  acceptableAnswers String
+  approved          Boolean @default(false)
 }

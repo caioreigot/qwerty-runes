@@ -1,35 +1,56 @@
-<form #form>
+<img title="Voltar" class="back" routerLink="/games" src="/assets/circle-back-arrow.svg">
+
+<form>
   <h1>Adicione sua própria pergunta ao mini-jogo de conhecimento geral</h1>
 
   <label for="type-of-question">
     Selecione o tipo da questão que será enviada (se será para adivinhar algo sobre o texto ou uma imagem):
   </label>
-  <select #typeOfQuestion id="type-of-question">
+  <select #typeOfQuestionSelect id="type-of-question">
     <option value="text">Texto</option>
     <option value="image">Imagem</option>
   </select>
 
-  <label for="question-input" class="margin-top-12">
-    Escreva a pergunta (aquela que aparece no topo da tela, exemplo: "{{ typeOfQuestion.value === 'image'
+  <label for="question-input" class="mt-12">
+    Escreva a pergunta (aquela que aparece no topo da tela, exemplo: "{{ typeOfQuestionSelect.value === 'image'
       ? "A que série pertence este personagem?"
-      : "Em qual série é dito a seguinte frase?"
+      : "Qual personagem diz a seguinte frase?"
     }}"):
   </label>
   <input #questionInput id="question-input" type="text" placeholder="Título da pergunta">
 
-  <div class="file-input-container margin-top-12" [class.hidden]="!(isImageQuestion | async)">
+  <div class="file-input-container mt-12" [class.hidden]="!(isImageQuestion | async)">
     <label for="file-input">Escolha a imagem (no máximo 1 MB):</label>
     <input #fileInput id="file-input" type="file" accept=".jpg,.jpeg,.png">
     <img #image>
   </div>
 
-  <div class="content-container margin-top-12" [class.hidden]="isImageQuestion | async">
-    <label for="textarea">
-      Escreva o conteúdo da pergunta (o que precisará ser adivinhado, exemplo: "I am not in danger, Skyler. I am the danger."):
+  <div class="content-container mt-12" [class.hidden]="isImageQuestion | async">
+    <label for="content-textarea">
+      Escreva o conteúdo da pergunta (o que precisará ser adivinhado, exemplo:
+      "I am not in danger, Skyler. I am the danger."):
     </label>
-    <textarea placeholder="Conteúdo referente à pergunta (escreva aqui o que será preciso adivinhar)" #textArea id="textarea" rows="10"></textarea>  
+    <textarea #contentTextArea
+      placeholder="Conteúdo referente à pergunta (escreva aqui o que será preciso adivinhar)"
+      id="content-textarea" rows="10" spellcheck="false"></textarea>  
   </div>
 
-  <button type="submit">Enviar</button>
+  <div class="acceptable-answers-container mt-12" [class.hidden]="isImageQuestion | async">
+    <label for="acceptable-answers-textarea">
+      Escreva as respostas que podem ser aceitas como corretas para sua pergunta
+      (as separe com vírgula, exemplo: 'Walter White, Heisenberg'):
+    </label>
+    <textarea #acceptableAnswersTextArea placeholder="Respostas aceitáveis"
+      id="acceptable-answers-textarea" rows="2" spellcheck="false"></textarea>  
+  </div>
+
+  <button class="send"
+    (click)="onSubmit(
+      questionInput.value,
+      typeOfQuestionSelect.value,
+      contentTextArea.value,
+      acceptableAnswersTextArea.value
+    )">Enviar</button>
+  
   <span class="obs">(obs.: sua questão só aparecerá no mini-jogo assim que for aprovada pela moderação)</span>
 </form>

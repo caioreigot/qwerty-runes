@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UserRepository } from '../../repositories/user-repository';
 import { UtilsService } from '../shared/utils.service';
 import { AddGeneralKnowledgeBody } from '../../dtos/add-general-knowledge-body';
@@ -30,9 +30,18 @@ export class GeneralKnowledgeController {
 
     this.generalKnowledgeRepository.addNewQuestion(
       body.questionTitle,
+      body.acceptableAnswers,
       body.type,
       body.content,
       isUserAdmin,
     );
+  }
+
+  @Get('get-unapproved-question')
+  async getUnapprovedQuestion() {
+    const question =
+      await this.generalKnowledgeRepository.getFirstUnapprovedQuestionOccurrence();
+
+    return question;
   }
 }

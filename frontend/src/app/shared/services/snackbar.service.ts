@@ -1,6 +1,22 @@
 import { Injectable } from '@angular/core';
 
-class Snackbar {
+@Injectable({ providedIn: 'root' })
+export class SnackbarService {
+
+  snackbar: Snackbar = new Snackbar();
+
+  showMessage(message: string, isError: boolean = false) {
+    if (!message) {
+      message = isError 
+        ? 'Ops! Erro desconhecido.'
+        : 'Sucesso!';
+    }
+
+    this.snackbar.open(message, 3000, isError);
+  }
+}
+
+export class Snackbar {
 
   snackbarContainer: HTMLElement;
   transitionDurationInMs = 400;
@@ -59,21 +75,5 @@ class Snackbar {
   private removeSnackbarAndResetTimeouts() {
     this.snackbarContainer.remove();
     this.timeoutIntervals.forEach(interval => clearInterval(interval));
-  }
-}
-
-@Injectable({ providedIn: 'root' })
-export class SnackbarService {
-
-  snackbar: Snackbar = new Snackbar();
-
-  showMessage(message: string, isError: boolean = false) {
-    if (!message) {
-      message = isError 
-        ? 'Ops! Erro desconhecido.'
-        : 'Sucesso!';
-    }
-
-    this.snackbar.open(message, 3000, isError);
   }
 }

@@ -10,24 +10,22 @@ import { CoreModule } from './core/core.module';
 import { AppRoutingModule } from './app-routing.module';
 import { GamesModule } from './features/games/games.module';
 import { LoginModule } from './features/login/login.module';
-import { AdminComponent } from './features/admin/admin.component';
+import { AdminModule } from './features/admin/admin.module';
 
 const backendUrl = isDevMode() ? 'http://localhost:3000' : document.location.host;
 const socketConfig: SocketIoConfig = { url: backendUrl, options: {} };
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    AdminComponent,
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SocketIoModule.forRoot(socketConfig),
     CoreModule,
     LoginModule,
     RegistrationModule,
-    GamesModule
+    GamesModule,
+    AdminModule,
+    SocketIoModule.forRoot(socketConfig),
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

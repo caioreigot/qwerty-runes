@@ -1,8 +1,8 @@
-import { PrismaService } from '../../database/prisma.service';
-import { Injectable } from '@nestjs/common';
-import { UserRepository } from '../user-repository';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { createHash } from 'crypto';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { PrismaService } from '../../database/prisma.service';
+import { UserRepository } from '../user-repository';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -39,5 +39,43 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     return user.isAdmin;
+  }
+
+  async getAllAdminNicknames(): Promise<string[]> {
+    const admins = await this.prisma.user.findMany({
+      where: { isAdmin: true },
+      select: { nickname: true },
+    });
+
+    return admins.map((admin) => admin.nickname);
+  }
+
+  async removeAdmin(nickname: string): Promise<{ nickname: string }> {
+    return await this.prisma.user.update({
+      where: { nickname },
+      data: { isAdmin: false },
+      select: { nickname: true },
+    });
+  }
+
+  async addAdmin(nickname: string): Promise<{ nickname: string }> {
+    try {
+      return await this.prisma.user.update({
+        where: { nickname },
+        data: { isAdmin: true },
+        select: { nickname: true },
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (e.code) {
+          case 'P2025':
+            throw new NotFoundException(
+              'Não existe um usuário com este nickname.',
+            );
+        }
+      }
+
+      throw e;
+    }
   }
 }

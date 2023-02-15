@@ -1,0 +1,18 @@
+<div class="add-new-admin">
+  <span>Adicione um novo administrador:</span>
+  <div>
+    <input [useInputValueOnEnter]="addAdmin.bind(this)" #addAdminInput type="text" placeholder="Nickname">
+    <button (click)="addAdmin(addAdminInput.value)">Adicionar</button>
+  </div>
+</div>
+
+<h1>Administradores:</h1>
+
+<ul>
+  <li *ngFor="let nickname of (adminNicknames | async)">
+    <img (click)="removeAdmin(nickname)"
+      title="Remover administrador"
+      src="/assets/remove-admin.svg">
+    <span>{{ nickname }}</span>
+  </li>
+</ul>
