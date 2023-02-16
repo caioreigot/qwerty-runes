@@ -1,9 +1,11 @@
 import { Request } from 'express';
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { UserRepository } from '../../repositories/user-repository';
 import { UtilsService } from '../shared/utils.service';
 import { AddGeneralKnowledgeBody } from '../../dtos/add-general-knowledge-body';
 import { GeneralKnowledgeRepository } from '../../repositories/general-knowledge-repository';
+import { AdminGuard } from '../../auth/shared/admin.guard';
+import { GeneralKnowledgeQuestion } from '@prisma/client';
 
 @Controller('general-knowledge')
 export class GeneralKnowledgeController {
@@ -14,10 +16,7 @@ export class GeneralKnowledgeController {
   ) {}
 
   @Post('add')
-  async add(
-    @Req() request: Request,
-    @Body() body: AddGeneralKnowledgeBody,
-  ): Promise<void> {
+  async add(@Req() request: Request, @Body() body: AddGeneralKnowledgeBody): Promise<void> {
     const jwtPayload = this.utilsService.getJwtTokenPayloadFromRequest(request);
     const isUserAdmin = await this.userRepository.isAdmin(jwtPayload.nickname);
 
@@ -37,11 +36,23 @@ export class GeneralKnowledgeController {
     );
   }
 
+  @UseGuards(AdminGuard)
   @Get('get-unapproved-question')
-  async getUnapprovedQuestion() {
-    const question =
-      await this.generalKnowledgeRepository.getFirstUnapprovedQuestionOccurrence();
+  async getUnapprovedQuestion(): Promise<GeneralKnowledgeQuestion> {
+    return await this.generalKnowledgeRepository.getFirstUnapprovedQuestionOccurrence();
+  }
 
-    return question;
+  @UseGuards(AdminGuard)
+  @Post('approve-question')
+  async approveQuestion(
+    @Body() body: { id: number; changes: Partial<GeneralKnowledgeQuestion> },
+  ): Promise<GeneralKnowledgeQuestion> {
+    return await this.generalKnowledgeRepository.approveQuestion(body.id, body.changes);
+  }
+
+  @UseGuards(AdminGuard)
+  @Post('reject-question')
+  async rejectQuestion(@Body() body: { id: number }): Promise<GeneralKnowledgeQuestion> {
+    return await this.generalKnowledgeRepository.rejectQuestion(body.id);
   }
 }

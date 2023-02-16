@@ -15,17 +15,12 @@ export class AdminGuard implements CanActivate {
     observer.next(false);
     this.router.navigate(['/']);
   }
-
-  onComplete(observer: Subscriber<boolean>, isAdmin: boolean) {
-    observer.next(isAdmin);
-    if (!isAdmin) this.router.navigate(['/']);
-  }
   
   canActivate() {
     return new Observable<boolean>((observer) => {
       this.backendService.isUserAdmin().subscribe({
         error: () => this.onError(observer),
-        next: (isAdmin) => this.onComplete(observer, isAdmin)
+        complete: () => observer.next(true)
       });
     })
   }

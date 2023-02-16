@@ -16,6 +16,7 @@ export abstract class PublicState {
   players: Player[];
 
   abstract disconnectPlayer(player: Player);
+  abstract toggleReady(player: Player);
 
   constructor(hostNickname, hostSocketId) {
     this.players = [{ nickname: hostNickname, socketId: hostSocketId }];

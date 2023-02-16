@@ -5,9 +5,7 @@ import { GeneralKnowledgeQuestionType } from '../../models/general-knowledge';
 import { GeneralKnowledgeRepository } from '../general-knowledge-repository';
 
 @Injectable()
-export class PrismaGeneralKnowledgeRepository
-  implements GeneralKnowledgeRepository
-{
+export class PrismaGeneralKnowledgeRepository implements GeneralKnowledgeRepository {
   constructor(private prisma: PrismaService) {}
 
   async addNewQuestion(
@@ -19,10 +17,10 @@ export class PrismaGeneralKnowledgeRepository
   ): Promise<void> {
     await this.prisma.generalKnowledgeQuestion.create({
       data: {
-        questionTitle,
-        acceptableAnswers,
+        questionTitle: questionTitle.trim(),
+        acceptableAnswers: acceptableAnswers.trim(),
+        content: content.trim(),
         type,
-        content,
         approved,
       },
     });
@@ -31,6 +29,31 @@ export class PrismaGeneralKnowledgeRepository
   getFirstUnapprovedQuestionOccurrence(): Promise<GeneralKnowledgeQuestion> {
     return this.prisma.generalKnowledgeQuestion.findFirst({
       where: { approved: false },
+    });
+  }
+
+  approveQuestion(
+    questionId: number,
+    changes: Partial<GeneralKnowledgeQuestion>,
+  ): Promise<GeneralKnowledgeQuestion> {
+    const changesTrimmed = {};
+
+    for (const key in changes) {
+      changesTrimmed[key] = changes[key].trim();
+    }
+
+    return this.prisma.generalKnowledgeQuestion.update({
+      where: { id: questionId },
+      data: {
+        ...changesTrimmed,
+        approved: true,
+      },
+    });
+  }
+
+  rejectQuestion(questionId: number): Promise<GeneralKnowledgeQuestion> {
+    return this.prisma.generalKnowledgeQuestion.delete({
+      where: { id: questionId },
     });
   }
 }

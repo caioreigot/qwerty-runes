@@ -5,7 +5,13 @@ import { LocalStorageService } from '../../../shared/services/local-storage.serv
 
 interface GeneralKnowledgeState {
   players: string[];
-  scoreboard: { nickname: string, score: number }[];
+  gameStarted: boolean;
+  scoreboard: { 
+    nickname: string;
+    score: number;
+    lastGuess: string;
+    isReady: boolean
+  }[];
 } 
 
 @Component({
@@ -18,6 +24,7 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
   roomCode = '';
   gameState: GeneralKnowledgeState = {
     players: [],
+    gameStarted: false,
     scoreboard: [],
   };
 
@@ -46,20 +53,24 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
     }
   }
 
+  onReadyButtonClick() {
+    this.socket.emit('toggle-ready');
+  }
+
   ngOnDestroy() {
     this.unsubscribeToSocketEvents();
     this.socket.emit('exit', this.localStorageService.getUserNickname());
   }
 
   subscribeToSocketEvents() {
-    this.socket.fromEvent('room-code').subscribe((roomCode: any) => {
+    this.socket.on('room-code', (roomCode: any) => {
       this.roomCode = roomCode;
-    });
+    })
 
-    this.socket.fromEvent('state-changed').subscribe((newState: any) => {
-      console.log('state-changed:', newState);
+    this.socket.on('state-changed', (newState: any) => {
+      console.log('State changed:', newState);
       this.gameState = newState;
-    });
+    })
   }
 
   unsubscribeToSocketEvents() {

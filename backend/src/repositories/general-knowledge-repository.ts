@@ -11,4 +11,11 @@ export abstract class GeneralKnowledgeRepository {
   ): Promise<void>;
 
   abstract getFirstUnapprovedQuestionOccurrence(): Promise<GeneralKnowledgeQuestion>;
+
+  abstract approveQuestion(
+    questionId: number,
+    changes: Partial<GeneralKnowledgeQuestion>,
+  ): Promise<GeneralKnowledgeQuestion>;
+
+  abstract rejectQuestion(questionId: number): Promise<GeneralKnowledgeQuestion>;
 }

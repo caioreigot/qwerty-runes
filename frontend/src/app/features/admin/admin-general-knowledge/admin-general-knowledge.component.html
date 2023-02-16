@@ -1,16 +1,43 @@
-<main>
-  <label for="question">Título da pergunta:</label>
-  <input id="question" type="text">
-  
+<div *ngIf="(question | async) === null && (haveQuestionToApprove | async) === null">
+  <img class="loading" src="/assets/rolling.svg">
+</div>
+
+<div *ngIf="(haveQuestionToApprove | async) === false">
+  <h1 class="no-more-questions">Não há mais questões para analisar, obrigado!</h1>
+</div>
+
+<main *ngIf="(question | async); let questionFilled">
   <div class="container">
-    <label for="content">Conteúdo da pergunta:</label>
-    <textarea id="content" rows="5"></textarea>
+    <label for="question">Título da pergunta:</label>
+    <input #questionTitle id="question" type="text" [value]="questionFilled.questionTitle">
+  </div>
   
-    <label for="content">Respostas aceitáveis (separadas por vírgula):</label>
-    <textarea id="content" rows="2"></textarea>
+  <div *ngIf="questionFilled.type !== 'image'" class="container">
+    <label for="content">Conteúdo da pergunta:</label>
+    <textarea #textContent id="content" rows="5" spellcheck="false">{{ questionFilled.content }}</textarea>
+  </div>
+
+  <div [class.hidden]="questionFilled.type !== 'image'" class="container">
+    <label for="content">Imagem da pergunta:</label>
+    <img #image>
+  </div>
+
+  <label for="acceptable-answers">Respostas aceitáveis (separadas por vírgula):</label>
+  <textarea #acceptableAnswers id="acceptable-answers" rows="2" spellcheck="false">{{ questionFilled.acceptableAnswers }}</textarea>
+
+  <div class="buttons">
+    <button class="approve" [disabled]="isButtonsDisabled"
+      (click)="approve(
+        questionFilled.id,
+        questionFilled.type,
+        questionTitle.value,
+        acceptableAnswers.value
+      )">
+      Aprovar
+    </button>
+    
+    <button (click)="reject(questionFilled.id)" class="reject" [disabled]="isButtonsDisabled">
+      Rejeitar
+    </button>
   </div>
 </main>
-<div class="buttons">
-  <button class="approve">Aprovar</button>
-  <button class="reject">Rejeitar</button>
-</div>

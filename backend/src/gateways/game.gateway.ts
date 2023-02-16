@@ -20,28 +20,20 @@ export class GameGateway implements OnGatewayInit {
   }
 
   @SubscribeMessage('create-room')
-  createRoom(
-    client: Socket,
-    data: { nickname: string; miniGameType: MiniGameType },
-  ) {
+  createRoom(client: Socket, data: { nickname: string; miniGameType: MiniGameType }) {
     this.gameRoomsService.exitRoomsWhenDisconnecting(client);
-    this.gameRoomsService.createRoom(
-      this.server,
-      client,
-      data.nickname,
-      data.miniGameType,
-    );
+    this.gameRoomsService.createRoom(this.server, client, data.nickname, data.miniGameType);
   }
 
   @SubscribeMessage('enter-room')
   enterRoom(client: Socket, data: { nickname: string; roomCode: string }) {
     this.gameRoomsService.exitRoomsWhenDisconnecting(client);
-    this.gameRoomsService.joinRoom(
-      this.server,
-      client,
-      data.nickname,
-      data.roomCode,
-    );
+    this.gameRoomsService.joinRoom(this.server, client, data.nickname, data.roomCode);
+  }
+
+  @SubscribeMessage('toggle-ready')
+  toggleReady(client: Socket) {
+    this.gameRoomsService.toggleReady(this.server, client);
   }
 
   @SubscribeMessage('exit')

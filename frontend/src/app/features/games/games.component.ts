@@ -22,9 +22,10 @@ export class GamesComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-    this.backendService.isUserAdmin().subscribe((isAdmin) => {
-      this._isUserAdmin.next(isAdmin);
+  ngOnInit() {
+    this.backendService.isUserAdmin().subscribe({
+      error: () => this._isUserAdmin.next(false),
+      complete: () => this._isUserAdmin.next(true)
     });
   }
 

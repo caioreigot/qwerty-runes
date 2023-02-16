@@ -8,10 +8,21 @@ export enum GeneralKnowledgeQuestionType {
 class Scoreboard {
   nickname: string;
   score: number;
+  isReady: boolean;
+  lastGuess: string;
 }
 
 export class GeneralKnowledgeGamePublicState extends PublicState {
+  gameStarted = false;
   scoreboard: Scoreboard[] = [];
+
+  toggleReady(player: Player) {
+    const targetPlayer = this.scoreboard.find((scoreboardItem) => {
+      return scoreboardItem.nickname === player.nickname;
+    });
+
+    targetPlayer.isReady = !targetPlayer.isReady;
+  }
 
   disconnectPlayer(player: Player) {
     const playerLeavingIndex = this.players.findIndex(
@@ -27,6 +38,20 @@ export class GeneralKnowledgeGamePublicState extends PublicState {
   }
 }
 
+export class ScoreboardItem {
+  nickname: string;
+  score: number;
+  isReady: boolean;
+  lastGuess: string;
+
+  constructor(nickname) {
+    this.nickname = nickname;
+    this.score = 0;
+    this.isReady = false;
+    this.lastGuess = '';
+  }
+}
+
 export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePublicState> {
   isImage: boolean;
   boardContent: string;
@@ -34,9 +59,6 @@ export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePub
 
   constructor(hostNickname: string, hostSocketId: string) {
     super(new GeneralKnowledgeGamePublicState(hostNickname, hostSocketId));
-    this.public.scoreboard.push({
-      nickname: hostNickname,
-      score: 0,
-    });
+    this.public.scoreboard.push(new ScoreboardItem(hostNickname));
   }
 }

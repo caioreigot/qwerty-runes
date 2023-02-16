@@ -48,6 +48,11 @@ const routes: Routes = [
       {
         path: 'general-knowledge',
         component: AdminGeneralKnowledgeComponent
+      },
+      {
+        path: '',
+        redirectTo: 'administrators',
+        pathMatch: 'full'
       }
     ]
   },

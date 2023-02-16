@@ -5,10 +5,7 @@ import { UserRepository } from '../../repositories/user-repository';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userRepository: UserRepository,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private userRepository: UserRepository, private jwtService: JwtService) {}
 
   async validate(
     nickname: string,

@@ -69,9 +69,7 @@ export class PrismaUserRepository implements UserRepository {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         switch (e.code) {
           case 'P2025':
-            throw new NotFoundException(
-              'Não existe um usuário com este nickname.',
-            );
+            throw new NotFoundException('Não existe um usuário com este nickname.');
         }
       }
 

@@ -1,7 +1,8 @@
-import { GeneralKnowledgeQuestionType } from '../../core/models/GeneralKnowledgeQuestionType';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { GeneralKnowledgeQuestionType } from '../../core/models/GeneralKnowledgeQuestionType';
+import { GeneralKnowledgeQuestion } from '../../core/models/GeneralKnowledgeQuestion';
 
 @Injectable({ providedIn: 'root' })
 export class BackendService {
@@ -19,6 +20,8 @@ export class BackendService {
     generalKnowledge: {
       add: 'general-knowledge/add',
       getUnapprovedQuestion: 'general-knowledge/get-unapproved-question',
+      approveQuestion: 'general-knowledge/approve-question',
+      rejectQuestion: 'general-knowledge/reject-question',
     }
   } 
 
@@ -70,7 +73,20 @@ export class BackendService {
     });
   }
 
-  getGeneralKnowledgeUnapprovedQuestion(): Observable<object> {
-    return this.http.get<object>(this.endpoints.generalKnowledge.getUnapprovedQuestion);
+  getGeneralKnowledgeUnapprovedQuestion(): Observable<GeneralKnowledgeQuestion> {
+    return this.http.get<GeneralKnowledgeQuestion>(this.endpoints.generalKnowledge.getUnapprovedQuestion);
+  }
+
+  approveQuestion(
+    questionId: number,
+    changes: Partial<GeneralKnowledgeQuestion>
+  ): Observable<GeneralKnowledgeQuestion> {
+    const body = { id: questionId, changes };
+    return this.http.post<GeneralKnowledgeQuestion>(this.endpoints.generalKnowledge.approveQuestion, body);
+  }
+
+  rejectQuestion(questionId: number) {
+    const body = { id: questionId };
+    return this.http.post<GeneralKnowledgeQuestion>(this.endpoints.generalKnowledge.rejectQuestion, body);
   }
 }

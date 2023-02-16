@@ -5,7 +5,15 @@
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
-  gap: 10px;
+}
+
+.loading {
+  width: 50px;
+  height: 50px;
+}
+
+.no-more-questions {
+  font-size: 2rem;
 }
 
 main {
@@ -13,9 +21,9 @@ main {
   flex-direction: column;
   width: 100%;
   max-width: 600px;
+  gap: 10px;
 
   label {
-    margin-top: 10px;
     margin-bottom: 2px;
   }
 
@@ -30,6 +38,13 @@ main {
   > .container {
     display: flex;
     flex-direction: column;
+
+    img {
+      object-fit: contain;
+      width: 100%;
+      height: 500px;
+      border: 2px solid @light;
+    }
   }
 }
 
@@ -58,8 +73,13 @@ main {
     font-size: 1rem;
     flex-grow: 1;
     border: 0;
+
+    &[disabled] {
+      cursor: auto;
+      filter: brightness(80%);
+    }
     
-    &:hover { filter: brightness(105%); }
-    &:active { filter: brightness(95%); }
+    &:not([disabled]):hover { filter: brightness(105%); }
+    &:not([disabled]):active { filter: brightness(95%); }
   }
 }

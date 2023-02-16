@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+import { Request } from 'express';
 import { AuthService } from '../../auth/shared/auth.service';
 import { LocalAuthGuard } from '../../auth/shared/local-auth.guard';
 import { JwtAuthGuard } from '../../auth/shared/jwt-auth.guard';
@@ -9,22 +11,15 @@ import {
   HttpStatus,
   Post,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { UserBody } from 'src/dtos/user-body';
-import { UserRepository } from 'src/repositories/user-repository';
-import { Request, Response } from 'express';
-import { UtilsService } from '../shared/utils.service';
+import { UserBody } from '../../dtos/user-body';
+import { UserRepository } from '../../repositories/user-repository';
+import { AdminGuard } from '../../auth/shared/admin.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private userRepository: UserRepository,
-    private authService: AuthService,
-    private utilsService: UtilsService,
-  ) {}
+  constructor(private userRepository: UserRepository, private authService: AuthService) {}
 
   @Post('create')
   async create(@Body() body: UserBody): Promise<void> {
@@ -56,11 +51,10 @@ export class UserController {
     return;
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('is-admin')
-  async isAdmin(@Req() request: Request): Promise<boolean> {
-    const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
-    return this.userRepository.isAdmin(payload.nickname);
+  async isAdmin(): Promise<boolean> {
+    return;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -69,25 +63,15 @@ export class UserController {
     return this.userRepository.getAllAdminNicknames();
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post('remove-admin')
   async removeAdmin(@Req() request: Request): Promise<{ nickname: string }> {
-    const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
-    const isUserAdmin = this.userRepository.isAdmin(payload.nickname);
-
-    if (!isUserAdmin) return;
-
     return this.userRepository.removeAdmin(request.body.nickname);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Post('add-admin')
   async addAdmin(@Req() request: Request): Promise<{ nickname: string }> {
-    const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
-    const isUserAdmin = this.userRepository.isAdmin(payload.nickname);
-
-    if (!isUserAdmin) return;
-
     return this.userRepository.addAdmin(request.body.nickname);
   }
 }

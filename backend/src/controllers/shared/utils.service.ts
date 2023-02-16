@@ -10,7 +10,8 @@ interface JwtPayload {
 
 @Injectable()
 export class UtilsService {
-  getJwtTokenPayloadFromRequest(request: Request): JwtPayload {
+  getJwtTokenPayloadFromRequest(request: Request): JwtPayload | null {
+    if (!request.headers.authorization) return null;
     const token = request.headers.authorization.split(' ')[1];
     return jwt_decode(token);
   }

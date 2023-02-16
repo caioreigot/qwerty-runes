@@ -1,7 +1,7 @@
 import * as randomstring from 'randomstring';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import { GeneralKnowledgeGameState } from '../models/general-knowledge';
+import { GeneralKnowledgeGameState, ScoreboardItem } from '../models/general-knowledge';
 import { MiniGameRoom, MiniGameType } from '../models/mini-game';
 
 @Injectable()
@@ -31,23 +31,14 @@ export class GameRoomsService {
       .toUpperCase();
   }
 
-  createRoom(
-    server: Server,
-    hostSocket: Socket,
-    hostNickname: string,
-    miniGameType: MiniGameType,
-  ) {
+  createRoom(server: Server, hostSocket: Socket, hostNickname: string, miniGameType: MiniGameType) {
     let iterations = 0;
 
     const joinRoomAndEmitCode = (roomCode: string) => {
       const newMiniGameRoom: MiniGameRoom = (function () {
         switch (miniGameType) {
           case MiniGameType.GENERAL_KNOWLEDGE:
-            const gameState = new GeneralKnowledgeGameState(
-              hostNickname,
-              hostSocket.id,
-            );
-
+            const gameState = new GeneralKnowledgeGameState(hostNickname, hostSocket.id);
             return new MiniGameRoom(roomCode, miniGameType, gameState);
         }
       })();
@@ -68,13 +59,9 @@ export class GameRoomsService {
       }
 
       // Gera um código aleatório para a sala
-      const roomCode = this.generateRandomCode(
-        GameRoomsService.ROOM_CODE_LENGTH,
-      );
+      const roomCode = this.generateRandomCode(GameRoomsService.ROOM_CODE_LENGTH);
 
-      const roomAlreadyCreated = Boolean(
-        server.sockets.adapter.rooms.get(roomCode),
-      );
+      const roomAlreadyCreated = Boolean(server.sockets.adapter.rooms.get(roomCode));
 
       // Se a sala não tiver sido criada antes, entre e envie o código ao host
       if (!roomAlreadyCreated) {
@@ -87,17 +74,10 @@ export class GameRoomsService {
   }
 
   // Faz o socket entrar em uma sala e emite o evento passando o nome do jogador que entrou
-  joinRoom(
-    server: Server,
-    socket: Socket,
-    nickname: string,
-    roomCodeArg: string,
-  ) {
+  joinRoom(server: Server, socket: Socket, nickname: string, roomCodeArg: string) {
     const roomCode = roomCodeArg.toUpperCase();
 
-    const targetRoom = GameRoomsService.rooms.find(
-      (room) => room.code === roomCode,
-    );
+    const targetRoom = GameRoomsService.rooms.find((room) => room.code === roomCode);
 
     if (!targetRoom) {
       socket.emit('error', 'Esta sala não existe.');
@@ -116,13 +96,37 @@ export class GameRoomsService {
     targetRoom.state.public.players.push({ nickname, socketId: socket.id });
 
     if (targetRoom.state instanceof GeneralKnowledgeGameState) {
-      targetRoom.state.public.scoreboard.push({ nickname, score: 0 });
+      targetRoom.state.public.scoreboard.push(new ScoreboardItem(nickname));
     }
 
     socket.join(roomCode);
     socket.emit('entered-room');
 
     server.to(roomCode).emit('state-changed', targetRoom.state.public);
+  }
+
+  toggleReady(server: Server, socket: Socket) {
+    GameRoomsService.rooms.forEach((room) => {
+      room.state.public.players.forEach((player) => {
+        // Se não for o player, retorna e vai pra proxima iteração
+        if (player.socketId !== socket.id) return;
+
+        room.state.public.toggleReady(player);
+        server.to(room.code).emit('state-changed', room.state.public);
+      });
+
+      if (room.state instanceof GeneralKnowledgeGameState) {
+        const playersNotReady = room.state.public.scoreboard.filter((scoreboard) => {
+          return scoreboard.isReady === false;
+        });
+
+        // Se não houverem mais players "não prontos"
+        if (playersNotReady.length === 0) {
+          // TODO
+          console.log('Todos estão prontos!');
+        }
+      }
+    });
   }
 
   exitRoomsWhenDisconnecting(socket: Socket) {
@@ -139,6 +143,8 @@ export class GameRoomsService {
 
         // Desconecta o jogador e manda o novo estado para o frontend
         room.state.public.disconnectPlayer(player);
+        socket.leave(room.code);
+
         socket.to(room.code).emit('state-changed', room.state.public);
       });
     });
@@ -146,9 +152,7 @@ export class GameRoomsService {
 
   // Remove a sala do array "rooms" desta classe
   private removeRoom(roomCode) {
-    const roomIndex = GameRoomsService.rooms.findIndex(
-      (room) => room.code === roomCode,
-    );
+    const roomIndex = GameRoomsService.rooms.findIndex((room) => room.code === roomCode);
 
     GameRoomsService.rooms.splice(roomIndex, 1);
   }

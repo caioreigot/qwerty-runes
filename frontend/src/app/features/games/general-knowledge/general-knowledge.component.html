@@ -1,16 +1,22 @@
 <div class="left-side">
-  <span>Placeholder para a pergunta</span>
-  <app-general-knowledge-board class="board" />
+  <h1 class="questionTitle"></h1>
+  
+  <div class="board">
+    <button (click)="onReadyButtonClick()">Estou pronto</button>
+  </div>
+  
   <input type="text" class="answer-input" placeholder="Digite aqui sua resposta">
 </div>
 
 <div class="right-side">
-  <span class="room-code">Código da sala: {{ roomCode }}</span>
+  <span *ngIf="roomCode" class="room-code">Código da sala: {{ roomCode }}</span>
   <div class="scoreboard">
     <app-player-score-card *ngFor="let scoreboardItem of gameState.scoreboard"
       class="player-score-card"
       [nickname]="scoreboardItem.nickname"
-      [score]="scoreboardItem.score" />
+      [score]="scoreboardItem.score"
+      [gameStarted]="gameState.gameStarted"
+      [isReady]="scoreboardItem.isReady" />
   </div>
   <a routerLink="/add-general-knowledge">Adicione sua própria pergunta</a>
 </div>
