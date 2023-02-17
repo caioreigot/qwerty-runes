@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="(haveQuestionToApprove | async) === false">
-  <h1 class="no-more-questions">Não há mais questões para analisar, obrigado!</h1>
+  <h1 class="no-more-questions">Não há questões para analisar, obrigado!</h1>
 </div>
 
 <main *ngIf="(question | async); let questionFilled">

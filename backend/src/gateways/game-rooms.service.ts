@@ -105,28 +105,35 @@ export class GameRoomsService {
     server.to(roomCode).emit('state-changed', targetRoom.state.public);
   }
 
-  toggleReady(server: Server, socket: Socket) {
-    GameRoomsService.rooms.forEach((room) => {
-      room.state.public.players.forEach((player) => {
+  /** @returns retorna uma boolean que diz se todos os jogadores
+   * da mesma sala deste socket estão prontos ou não */
+  toggleReady(server: Server, socket: Socket): boolean {
+    // Iteração entre todos as salas de mini-jogos
+    for (let i = 0; i < GameRoomsService.rooms.length; i++) {
+      const room = GameRoomsService.rooms[i];
+
+      // Iteração entre todos os players da sala
+      for (let j = 0; j < room.state.public.players.length; j++) {
+        const player = room.state.public.players[j];
+
         // Se não for o player, retorna e vai pra proxima iteração
-        if (player.socketId !== socket.id) return;
+        if (player.socketId !== socket.id) continue;
 
         room.state.public.toggleReady(player);
         server.to(room.code).emit('state-changed', room.state.public);
-      });
 
-      if (room.state instanceof GeneralKnowledgeGameState) {
-        const playersNotReady = room.state.public.scoreboard.filter((scoreboard) => {
-          return scoreboard.isReady === false;
-        });
+        if (room.state instanceof GeneralKnowledgeGameState) {
+          const playersNotReady = room.state.public.scoreboard.filter((scoreboard) => {
+            return scoreboard.isReady === false;
+          });
 
-        // Se não houverem mais players "não prontos"
-        if (playersNotReady.length === 0) {
-          // TODO
-          console.log('Todos estão prontos!');
+          // Se todos os players estiverem prontos
+          return playersNotReady.length === 0;
         }
       }
-    });
+    }
+
+    return false;
   }
 
   exitRoomsWhenDisconnecting(socket: Socket) {

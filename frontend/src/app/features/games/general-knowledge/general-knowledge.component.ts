@@ -28,6 +28,16 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
     scoreboard: [],
   };
 
+  get myScoreboardItem() {
+    const nickname = this.localStorageService.getUserNickname();
+
+    if (!nickname) return;
+    
+    return this.gameState.scoreboard.find((scoreboardItem) => {
+      return scoreboardItem.nickname === nickname;
+    });
+  }
+
   constructor(
     private socket: Socket,
     private localStorageService: LocalStorageService,

@@ -7,24 +7,31 @@
 .card {
   display: flex;
   flex-direction: row;
-  padding: 6px 10px;
-  gap: 8px;
+  padding: 0px 8px;
+  height: 60px;
+  gap: 10px;
 
   background-color: #fff;
   border-radius: 2px;
   color: @dark;
 
   &.ready {
-    outline: 2px solid #55ff49;
+    outline: 2px solid #4fe344;
   }
 
   &.notReady {
     outline: 2px solid #ff4949;
   }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
 }
 
 .score, .nickname {
-  padding: 5px;
   font-family: @varela;
 }
 
@@ -33,9 +40,10 @@
   align-items: center;
   justify-content: center;
   width: 25%;
-  padding: 5px 25px;
+  height: 80%;
+  align-self: center;
   text-align: center;
-  font-size: 1.1rem;
+  font-size: 1rem;
   border-radius: 2px;
   background-color: @primary;
   color: @light;
@@ -45,6 +53,12 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  flex-grow: 1;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
+}
+
+.last-guess {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
 }

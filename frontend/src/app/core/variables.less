@@ -54,17 +54,22 @@
   white-space: normal;
   font-weight: 700;
   text-align: center;
-  padding: 15px 20px;
+  padding: 18px 20px;
   color: #fff;
   background-color: @primary;
-  height: 48px;
+  height: fit-content;
   
   &:hover {
     transform: scale(1.04);
-    background-color: @primary;
   }
 
   &:active {
     filter: brightness(120%);
   }
+}
+
+.light-button() {
+  .primary-button();
+  background-color: @light;
+  color: @primary;
 }

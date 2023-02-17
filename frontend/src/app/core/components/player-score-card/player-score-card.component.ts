@@ -11,4 +11,5 @@ export class PlayerScoreCardComponent {
   @Input() isReady = false;
   @Input() nickname = 'Desconhecido';
   @Input() score = 0;
+  @Input() lastGuess = '';
 }

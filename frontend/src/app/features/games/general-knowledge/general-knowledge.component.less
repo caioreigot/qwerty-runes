@@ -27,6 +27,13 @@
   .board {
     .flex-all-center();
     flex-grow: 1;
+
+    > .ready-button {
+      .light-button();
+
+      &.ready { border: 3px solid #4fe344; }
+      &.notReady { border: 3px solid #ff4949; }
+    }
   }
 
   .answer-input {
@@ -51,7 +58,7 @@
 .right-side {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  width: 25%;
   height: 100%;
   background-color: @dark;
   gap: 10px;

@@ -33,7 +33,11 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('toggle-ready')
   toggleReady(client: Socket) {
-    this.gameRoomsService.toggleReady(this.server, client);
+    const allPlayersReady = this.gameRoomsService.toggleReady(this.server, client);
+
+    if (allPlayersReady) {
+      // TODO
+    }
   }
 
   @SubscribeMessage('exit')

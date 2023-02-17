@@ -2,7 +2,12 @@
   <h1 class="questionTitle"></h1>
   
   <div class="board">
-    <button (click)="onReadyButtonClick()">Estou pronto</button>
+    <button class="ready-button"
+      [ngClass]="myScoreboardItem?.isReady ? 'ready' : 'notReady'"
+      *ngIf="!gameState.gameStarted"
+      (click)="onReadyButtonClick()">
+      Pronto
+    </button>
   </div>
   
   <input type="text" class="answer-input" placeholder="Digite aqui sua resposta">
@@ -16,7 +21,8 @@
       [nickname]="scoreboardItem.nickname"
       [score]="scoreboardItem.score"
       [gameStarted]="gameState.gameStarted"
-      [isReady]="scoreboardItem.isReady" />
+      [isReady]="scoreboardItem.isReady"
+      [lastGuess]="scoreboardItem.lastGuess" />
   </div>
   <a routerLink="/add-general-knowledge">Adicione sua própria pergunta</a>
 </div>

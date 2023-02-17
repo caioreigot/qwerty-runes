@@ -1,4 +1,7 @@
-<div class="card" [class.ready]="isReady && !gameStarted" [class.notReady]="!isReady && !gameStarted">
+<div class="card" [ngClass]="{ 'ready': isReady && !gameStarted, 'notReady': !isReady && !gameStarted }">
   <span class="score">{{ score }}</span>
-  <span class="nickname">{{ nickname }}</span>
+  <div>
+    <span class="nickname">{{ nickname }}</span>
+    <span class="last-guess">{{ lastGuess }}</span>
+  </div>
 </div>
