@@ -12,9 +12,16 @@ class Scoreboard {
   lastGuess: string;
 }
 
+class Board {
+  id: number;
+  questionTitle: string;
+  type: GeneralKnowledgeQuestionType;
+  content: string;
+}
+
 export class GeneralKnowledgeGamePublicState extends PublicState {
-  gameStarted = false;
   scoreboard: Scoreboard[] = [];
+  board: Board | null = null;
 
   toggleReady(player: Player) {
     const targetPlayer = this.scoreboard.find((scoreboardItem) => {
@@ -53,9 +60,9 @@ export class ScoreboardItem {
 }
 
 export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePublicState> {
-  isImage: boolean;
-  boardContent: string;
-  correctAnswers: string;
+  boardIdQueue: number[] = [];
+  receiptConfirmations: { questionId: number; confirmedSocketIds: string[] }[] = [];
+  currentCorrectAnswers: string;
 
   constructor(hostNickname: string, hostSocketId: string) {
     super(new GeneralKnowledgeGamePublicState(hostNickname, hostSocketId));

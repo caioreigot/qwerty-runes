@@ -33,10 +33,10 @@ export class GameGateway implements OnGatewayInit {
 
   @SubscribeMessage('toggle-ready')
   toggleReady(client: Socket) {
-    const allPlayersReady = this.gameRoomsService.toggleReady(this.server, client);
+    const room = this.gameRoomsService.toggleReady(this.server, client);
 
-    if (allPlayersReady) {
-      // TODO
+    if (room) {
+      this.gameRoomsService.startGame(this.server, room);
     }
   }
 
@@ -44,4 +44,20 @@ export class GameGateway implements OnGatewayInit {
   exit(client: Socket) {
     this.gameRoomsService.leaveAllRooms(client);
   }
+
+  @SubscribeMessage('confirm-question-received')
+  confirmQuestionReceived(client: Socket, data: { id: number }) {
+    this.gameRoomsService.confirmQuestionReceived(this.server, client, data.id);
+  }
+
+  /*
+    TODO: Instanciar um Temporizador no lado do server, ao acabar, enviar o novo state
+    ao frontend e chamar o "confirmQuestionReceived" do GameRoomsService
+
+    (dar start no Temporizador no confirmQuestionReceived se ele não estiver setado)
+
+    O frontend irá esperar pelo evento "question-time-over" para mudar a tela para a de
+    resposta. Nesta tela, esperar no minimo 5 segundos, após isso, se todos sockets tiverem
+    confirmado, vai pra proxima questão
+  */
 }

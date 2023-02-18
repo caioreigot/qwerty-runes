@@ -33,6 +33,7 @@ export class GameState<T extends PublicState> {
 
 export class MiniGameRoom {
   code: string;
+  gameStarted = false;
   miniGameType: MiniGameType;
   state: GameState<PublicState>;
 

@@ -1,17 +1,28 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
+import { GeneralKnowledgeQuestionType } from '../../../core/models/GeneralKnowledgeQuestionType';
 import { LocalStorageService } from '../../../shared/services/local-storage.service';
+
+interface Board {
+  id: number;
+  questionTitle: string;
+  type: GeneralKnowledgeQuestionType;
+  content: string;
+}
+
+interface ScoreboardItem {
+  nickname: string;
+  score: number;
+  lastGuess: string;
+  isReady: boolean
+}
 
 interface GeneralKnowledgeState {
   players: string[];
   gameStarted: boolean;
-  scoreboard: { 
-    nickname: string;
-    score: number;
-    lastGuess: string;
-    isReady: boolean
-  }[];
+  board: Board | null;
+  scoreboard: ScoreboardItem[];
 } 
 
 @Component({
@@ -24,9 +35,12 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
   roomCode = '';
   gameState: GeneralKnowledgeState = {
     players: [],
-    gameStarted: false,
     scoreboard: [],
+    gameStarted: false,
+    board: null,
   };
+
+  idsConfirmed: number[] = [];
 
   get myScoreboardItem() {
     const nickname = this.localStorageService.getUserNickname();
@@ -75,12 +89,26 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
   subscribeToSocketEvents() {
     this.socket.on('room-code', (roomCode: any) => {
       this.roomCode = roomCode;
-    })
+    });
 
-    this.socket.on('state-changed', (newState: any) => {
-      console.log('State changed:', newState);
+    this.socket.on('state-changed', (newState: GeneralKnowledgeState) => {
+      console.log('state changed:', newState);
       this.gameState = newState;
-    })
+
+      if (newState.board && this.idsConfirmed.indexOf(newState.board.id) < 0) {
+        const questionId = newState.board.id;
+        this.socket.emit('confirm-question-received', questionId);
+        this.idsConfirmed.push(questionId);
+      }
+    });
+
+    this.socket.on('all-sockets-ready', () => {
+      this.setupBoard();
+    });
+  }
+
+  setupBoard() {
+    console.log(this.gameState.board);
   }
 
   unsubscribeToSocketEvents() {

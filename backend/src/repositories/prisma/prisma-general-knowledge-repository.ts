@@ -26,6 +26,21 @@ export class PrismaGeneralKnowledgeRepository implements GeneralKnowledgeReposit
     });
   }
 
+  async getQuestion(id: number): Promise<GeneralKnowledgeQuestion> {
+    return this.prisma.generalKnowledgeQuestion.findFirst({
+      where: { id },
+    });
+  }
+
+  async getQuestionIdentifiers(max: number): Promise<number[]> {
+    const ids = await this.prisma.generalKnowledgeQuestion.findMany({
+      select: { id: true },
+      take: max,
+    });
+
+    return ids.map((obj) => obj.id);
+  }
+
   getFirstUnapprovedQuestionOccurrence(): Promise<GeneralKnowledgeQuestion> {
     return this.prisma.generalKnowledgeQuestion.findFirst({
       where: { approved: false },

@@ -10,7 +10,9 @@ export abstract class GeneralKnowledgeRepository {
     approved: boolean,
   ): Promise<void>;
 
+  abstract getQuestion(id: number): Promise<GeneralKnowledgeQuestion>;
   abstract getFirstUnapprovedQuestionOccurrence(): Promise<GeneralKnowledgeQuestion>;
+  abstract getQuestionIdentifiers(max: number): Promise<number[]>;
 
   abstract approveQuestion(
     questionId: number,
