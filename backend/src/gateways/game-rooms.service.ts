@@ -138,6 +138,8 @@ export class GameRoomsService {
       // Retira o ID que foi atualmente usado
       room.state.boardIdQueue.splice(0, 1);
 
+      room.state.currentAcceptableAnswers = question.acceptableAnswers;
+
       room.state.public.board = {
         id: question.id,
         questionTitle: question.questionTitle,
@@ -197,12 +199,19 @@ export class GameRoomsService {
     }
   }
 
+  private splitAcceptableAnswers(acceptableAnswers: string): string[] {
+    return acceptableAnswers?.split(',').map((answer) => answer.trim()) ?? [];
+  }
+
   private startDecreasingTimerAndEmit(server: Server, room: MiniGameRoom) {
     const decrementer = setInterval(() => {
       const roomState = room.state as GeneralKnowledgeGameState;
       const timer = roomState.public.timerInSeconds;
 
       if (timer <= 0) {
+        const acceptableAnswers = this.splitAcceptableAnswers(roomState.currentAcceptableAnswers);
+
+        server.to(room.code).emit('question-time-over', acceptableAnswers[0]);
         clearInterval(decrementer);
         return;
       }
@@ -242,6 +251,45 @@ export class GameRoomsService {
     }
 
     return null;
+  }
+
+  receiveAnswer(server: Server, socket: Socket, answer: string) {
+    GameRoomsService.rooms.forEach((room) => {
+      if (!(room.state instanceof GeneralKnowledgeGameState)) return;
+
+      const targetNickname = room.state.public.players.find(
+        (player) => player.socketId == socket.id,
+      )?.nickname;
+
+      // Se o player não está nessa sala, retorna para ir para próxima iteração
+      if (!targetNickname) return;
+
+      // Transforma as respostas em lower case
+      const answersLowerCase = this.splitAcceptableAnswers(room.state.currentAcceptableAnswers).map(
+        (answer) => answer.toLowerCase(),
+      );
+
+      // Vê se a resposta do jogador (em lower case) bate com uma das respostas aceitaveis (em lower case)
+      const playerAnsweredCorrectly = answersLowerCase.includes(answer.toLowerCase());
+
+      if (room.state instanceof GeneralKnowledgeGameState) {
+        room.state.public.scoreboard.forEach((scoreboardItem) => {
+          if (scoreboardItem.nickname === targetNickname) {
+            if (playerAnsweredCorrectly) {
+              scoreboardItem.score += (
+                room.state as GeneralKnowledgeGameState
+              ).public.timerInSeconds;
+
+              return;
+            }
+
+            scoreboardItem.lastGuess = answer;
+          }
+        });
+      }
+
+      server.to(room.code).emit('state-changed', room.state.public);
+    });
   }
 
   exitRoomsWhenDisconnecting(socket: Socket) {

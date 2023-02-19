@@ -24,6 +24,11 @@
         src="{{ state.board.content }}">
     </ng-container>
 
+    <div class="correct-answer" *ngIf="correctAnswer">
+      <p>A resposta era</p>
+      <h1>{{ correctAnswer }}</h1>
+    </div>
+
     <button class="ready-button"
       [ngClass]="myScoreboardItem?.isReady ? 'ready' : 'notReady'"
       *ngIf="!state.gameStarted"
@@ -32,7 +37,10 @@
     </button>
   </div>
   
-  <input type="text" class="answer-input" placeholder="Digite aqui sua resposta">
+  <input class="answer-input"
+    type="text"
+    placeholder="Digite aqui sua resposta"
+    [useInputValueOnEnter]="sendAnswer.bind(this)">
 </div>
 
 <div class="right-side">

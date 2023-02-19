@@ -64,7 +64,7 @@ export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePub
   timeInSecondsToAnswer = 12;
   boardIdQueue: number[] = [];
   receiptConfirmations: { questionId: number; confirmedSocketIds: string[] }[] = [];
-  currentCorrectAnswers: string;
+  currentAcceptableAnswers: string;
 
   resetTimer() {
     this.public.timerInSeconds = this.timeInSecondsToAnswer;

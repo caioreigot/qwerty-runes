@@ -12,6 +12,7 @@ export class UseInputValueOnEnterDirective {
       if (event.key === 'Enter') {
         if (!this.useInputValueOnEnter) return;
         this.useInputValueOnEnter(element.value);
+        element.value = '';
       }
     }
   }

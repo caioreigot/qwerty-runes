@@ -33,7 +33,8 @@ interface GeneralKnowledgeState {
 })
 export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
 
-  roomCode = '';
+  roomCode: string | null = null;
+  correctAnswer: string | null = null;
   canShowQuestion = false;
   state: GeneralKnowledgeState = {
     players: [],
@@ -86,7 +87,11 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.unsubscribeToSocketEvents();
-    this.socket.emit('exit', this.localStorageService.getUserNickname());
+    this.socket.emit('exit');
+  }
+
+  sendAnswer(answer: string) {
+    this.socket.emit('answer', { answer });
   }
 
   subscribeToSocketEvents() {
@@ -107,6 +112,11 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
 
     this.socket.on('all-sockets-ready', () => {
       this.canShowQuestion = true;
+    });
+
+    this.socket.on('question-time-over', (correctAnswer: string) => {
+      this.canShowQuestion = false;
+      this.correctAnswer = correctAnswer;
     });
   }
 

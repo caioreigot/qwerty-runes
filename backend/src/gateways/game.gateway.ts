@@ -40,6 +40,11 @@ export class GameGateway implements OnGatewayInit {
     }
   }
 
+  @SubscribeMessage('answer')
+  answer(client: Socket, data: { answer: string }) {
+    this.gameRoomsService.receiveAnswer(this.server, client, data.answer);
+  }
+
   @SubscribeMessage('exit')
   exit(client: Socket) {
     this.gameRoomsService.leaveAllRooms(client);
@@ -49,10 +54,4 @@ export class GameGateway implements OnGatewayInit {
   confirmQuestionReceived(client: Socket, data: { id: number }) {
     this.gameRoomsService.confirmQuestionReceived(this.server, client, data.id);
   }
-
-  /*
-    O frontend irá esperar pelo evento "question-time-over" para mudar a tela para a de
-    resposta. Nesta tela, esperar no minimo 5 segundos, após isso, se todos sockets tiverem
-    confirmado, vai pra proxima questão
-  */
 }
