@@ -15,24 +15,46 @@
   width: 75%;
   height: 100%;
 
-  > h1 {
+  .question-title {
     width: 100%;
     text-align: center;
     font-family: @varela;
     font-size: 1.4rem;
-    font-weight: normal;
-    padding: 15px;
+    font-weight: bold;
+    padding: 10px 10px 0px 10px;
+  }
+
+  .timer {
+    text-align: center;
+    padding: 2px 10px 5px 10px;
+  }
+
+  .white-divider {
+    height: 2px;
+    width: 100%;
+    background-color: @light;
   }
 
   .board {
     .flex-all-center();
     flex-grow: 1;
+    overflow: hidden;
 
-    > .ready-button {
+    .ready-button {
       .light-button();
 
       &.ready { border: 3px solid #4fe344; }
       &.notReady { border: 3px solid #ff4949; }
+    }
+
+    .text-content {
+      font-size: 1.2rem;
+    }
+
+    .image-content {
+      object-fit: contain;
+      width: 98%;
+      max-height: 98%;
     }
   }
 

@@ -1,10 +1,32 @@
 <div class="left-side">
-  <h1 class="questionTitle"></h1>
+  <ng-container *ngIf="state.board && canShowQuestion">
+    <h1 class="question-title">
+      {{ state.board.questionTitle }}
+    </h1>
+    <span class="timer">
+      {{ state.timerInSeconds }}s restantes.
+    </span>
   
+    <div class="white-divider"></div>
+  </ng-container>
+
   <div class="board">
+    <ng-container *ngIf="state.board && canShowQuestion">
+      <p
+        class="text-content"
+        *ngIf="state.board.type === 'text'"
+      >
+        {{ state.board.content }}
+      </p>
+      <img
+        class="image-content"
+        *ngIf="state.board.type === 'image'"
+        src="{{ state.board.content }}">
+    </ng-container>
+
     <button class="ready-button"
       [ngClass]="myScoreboardItem?.isReady ? 'ready' : 'notReady'"
-      *ngIf="!gameState.gameStarted"
+      *ngIf="!state.gameStarted"
       (click)="onReadyButtonClick()">
       Pronto
     </button>
@@ -16,11 +38,11 @@
 <div class="right-side">
   <span *ngIf="roomCode" class="room-code">Código da sala: {{ roomCode }}</span>
   <div class="scoreboard">
-    <app-player-score-card *ngFor="let scoreboardItem of gameState.scoreboard"
+    <app-player-score-card *ngFor="let scoreboardItem of state.scoreboard"
       class="player-score-card"
       [nickname]="scoreboardItem.nickname"
       [score]="scoreboardItem.score"
-      [gameStarted]="gameState.gameStarted"
+      [gameStarted]="state.gameStarted"
       [isReady]="scoreboardItem.isReady"
       [lastGuess]="scoreboardItem.lastGuess" />
   </div>

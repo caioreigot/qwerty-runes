@@ -20,9 +20,10 @@ interface ScoreboardItem {
 
 interface GeneralKnowledgeState {
   players: string[];
+  scoreboard: ScoreboardItem[];
+  timerInSeconds: number;
   gameStarted: boolean;
   board: Board | null;
-  scoreboard: ScoreboardItem[];
 } 
 
 @Component({
@@ -33,9 +34,11 @@ interface GeneralKnowledgeState {
 export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
 
   roomCode = '';
-  gameState: GeneralKnowledgeState = {
+  canShowQuestion = false;
+  state: GeneralKnowledgeState = {
     players: [],
     scoreboard: [],
+    timerInSeconds: 0,
     gameStarted: false,
     board: null,
   };
@@ -47,7 +50,7 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
 
     if (!nickname) return;
     
-    return this.gameState.scoreboard.find((scoreboardItem) => {
+    return this.state.scoreboard.find((scoreboardItem) => {
       return scoreboardItem.nickname === nickname;
     });
   }
@@ -93,7 +96,7 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
 
     this.socket.on('state-changed', (newState: GeneralKnowledgeState) => {
       console.log('state changed:', newState);
-      this.gameState = newState;
+      this.state = newState;
 
       if (newState.board && this.idsConfirmed.indexOf(newState.board.id) < 0) {
         const questionId = newState.board.id;
@@ -103,12 +106,8 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
     });
 
     this.socket.on('all-sockets-ready', () => {
-      this.setupBoard();
+      this.canShowQuestion = true;
     });
-  }
-
-  setupBoard() {
-    console.log(this.gameState.board);
   }
 
   unsubscribeToSocketEvents() {

@@ -21,6 +21,7 @@ class Board {
 
 export class GeneralKnowledgeGamePublicState extends PublicState {
   scoreboard: Scoreboard[] = [];
+  timerInSeconds = 12;
   board: Board | null = null;
 
   toggleReady(player: Player) {
@@ -60,9 +61,14 @@ export class ScoreboardItem {
 }
 
 export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePublicState> {
+  timeInSecondsToAnswer = 12;
   boardIdQueue: number[] = [];
   receiptConfirmations: { questionId: number; confirmedSocketIds: string[] }[] = [];
   currentCorrectAnswers: string;
+
+  resetTimer() {
+    this.public.timerInSeconds = this.timeInSecondsToAnswer;
+  }
 
   constructor(hostNickname: string, hostSocketId: string) {
     super(new GeneralKnowledgeGamePublicState(hostNickname, hostSocketId));

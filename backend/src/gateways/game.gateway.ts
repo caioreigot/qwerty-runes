@@ -1,3 +1,4 @@
+import { Server, Socket } from 'socket.io';
 import {
   OnGatewayInit,
   SubscribeMessage,
@@ -5,7 +6,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 
-import { Server, Socket } from 'socket.io';
 import { MiniGameType } from '../models/mini-game';
 import { GameRoomsService } from './game-rooms.service';
 
@@ -51,11 +51,6 @@ export class GameGateway implements OnGatewayInit {
   }
 
   /*
-    TODO: Instanciar um Temporizador no lado do server, ao acabar, enviar o novo state
-    ao frontend e chamar o "confirmQuestionReceived" do GameRoomsService
-
-    (dar start no Temporizador no confirmQuestionReceived se ele não estiver setado)
-
     O frontend irá esperar pelo evento "question-time-over" para mudar a tela para a de
     resposta. Nesta tela, esperar no minimo 5 segundos, após isso, se todos sockets tiverem
     confirmado, vai pra proxima questão

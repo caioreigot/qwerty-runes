@@ -32,13 +32,17 @@ export class PrismaGeneralKnowledgeRepository implements GeneralKnowledgeReposit
     });
   }
 
-  async getQuestionIdentifiers(max: number): Promise<number[]> {
-    const ids = await this.prisma.generalKnowledgeQuestion.findMany({
-      select: { id: true },
-      take: max,
-    });
+  async getApprovedQuestionIdentifiers(amount: number): Promise<number[]> {
+    const identifiers = (
+      await this.prisma.generalKnowledgeQuestion.findMany({
+        select: { id: true },
+        where: { approved: true },
+        take: amount,
+      })
+    ).map((obj) => obj.id);
 
-    return ids.map((obj) => obj.id);
+    // Retorna os IDs em ordem aleatória
+    return identifiers.sort(() => 0.5 - Math.random());
   }
 
   getFirstUnapprovedQuestionOccurrence(): Promise<GeneralKnowledgeQuestion> {

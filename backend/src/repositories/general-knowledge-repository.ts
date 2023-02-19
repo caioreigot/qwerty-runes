@@ -12,7 +12,7 @@ export abstract class GeneralKnowledgeRepository {
 
   abstract getQuestion(id: number): Promise<GeneralKnowledgeQuestion>;
   abstract getFirstUnapprovedQuestionOccurrence(): Promise<GeneralKnowledgeQuestion>;
-  abstract getQuestionIdentifiers(max: number): Promise<number[]>;
+  abstract getApprovedQuestionIdentifiers(amount: number): Promise<number[]>;
 
   abstract approveQuestion(
     questionId: number,

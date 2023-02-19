@@ -14,6 +14,7 @@ Cada mini-jogo (GameState) terá seu próprio PublicState, portanto, é necessá
 classe e extender a PublicState para então criar o GameState */
 export abstract class PublicState {
   players: Player[];
+  gameStarted = false;
 
   abstract disconnectPlayer(player: Player);
   abstract toggleReady(player: Player);
@@ -33,7 +34,6 @@ export class GameState<T extends PublicState> {
 
 export class MiniGameRoom {
   code: string;
-  gameStarted = false;
   miniGameType: MiniGameType;
   state: GameState<PublicState>;
 

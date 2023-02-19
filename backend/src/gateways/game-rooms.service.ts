@@ -91,7 +91,7 @@ export class GameRoomsService {
       return;
     }
 
-    if (targetRoom.gameStarted) {
+    if (targetRoom.state.public.gameStarted) {
       socket.emit('error', 'O jogo já começou nesta sala.');
       return;
     }
@@ -123,10 +123,12 @@ export class GameRoomsService {
     );
 
     if (!roomToStartGame) return;
-    roomToStartGame.gameStarted = true;
+    roomToStartGame.state.public.gameStarted = true;
 
     if (room.state instanceof GeneralKnowledgeGameState) {
-      room.state.boardIdQueue = await this.generalKnowledgeRepository.getQuestionIdentifiers(20);
+      room.state.boardIdQueue =
+        await this.generalKnowledgeRepository.getApprovedQuestionIdentifiers(20);
+
       const question = await this.generalKnowledgeRepository.getQuestion(
         room.state.boardIdQueue[0],
       );
@@ -153,7 +155,7 @@ export class GameRoomsService {
       return socket.rooms.has(room.code);
     });
 
-    if (room.state instanceof GeneralKnowledgeGameState) {
+    if (room?.state instanceof GeneralKnowledgeGameState) {
       const roomReceiptConfirmations = room.state.receiptConfirmations;
 
       let receiptConfirmationItem = roomReceiptConfirmations.find(
@@ -185,10 +187,29 @@ export class GameRoomsService {
         // Como a questão já foi confirmada, ela é removida do array de receiptConfirmations
         const indexToRemove = room.state.receiptConfirmations.indexOf(receiptConfirmationItem);
         room.state.receiptConfirmations.splice(indexToRemove, 1);
+        room.state.resetTimer();
+
+        // Começa a decrementar o contador
+        this.startDecreasingTimerAndEmit(server, room);
 
         server.to(room.code).emit('all-sockets-ready');
       }
     }
+  }
+
+  private startDecreasingTimerAndEmit(server: Server, room: MiniGameRoom) {
+    const decrementer = setInterval(() => {
+      const roomState = room.state as GeneralKnowledgeGameState;
+      const timer = roomState.public.timerInSeconds;
+
+      if (timer <= 0) {
+        clearInterval(decrementer);
+        return;
+      }
+
+      roomState.public.timerInSeconds--;
+      server.to(room.code).emit('state-changed', room.state.public);
+    }, 1000);
   }
 
   /** @returns retorna a sala do mini-jogo caso todos os players estejam prontos */
