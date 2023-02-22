@@ -1,0 +1,19 @@
+{
+  "name": "qwerty-runes",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "npm run build --prefix backend",
+    "start": "npm run start:prod --prefix backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caioreigot/qwerty-runes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caioreigot/qwerty-runes/issues"
+  },
+  "homepage": "https://github.com/caioreigot/qwerty-runes#readme"
+}
