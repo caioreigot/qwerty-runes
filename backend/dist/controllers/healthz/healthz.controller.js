@@ -16,7 +16,6 @@ exports.HealthzController = void 0;
 const common_1 = require("@nestjs/common");
 let HealthzController = class HealthzController {
     healthz(response) {
-        console.log('JWT_SECRET:', process.env.JWT_SECRET);
         response.status(common_1.HttpStatus.OK).send('O servidor está funcionando corretamente.');
     }
 };
