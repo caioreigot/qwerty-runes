@@ -28,7 +28,6 @@ let PrismaUserRepository = class PrismaUserRepository {
             },
         });
         const users = await this.prisma.user.findMany();
-        console.log(users);
     }
     async validate(nickname, password) {
         const hash = (0, crypto_1.createHash)('sha256').update(password).digest('hex');

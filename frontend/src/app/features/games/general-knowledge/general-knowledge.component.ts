@@ -72,7 +72,6 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
       return current.score > accumulator.score ? current : accumulator;
     });
 
-    console.log(winner);
     return winner;
   }
 

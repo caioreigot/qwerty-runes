@@ -20,7 +20,6 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     const users = await this.prisma.user.findMany();
-    console.log(users);
   }
 
   async validate(nickname: string, password: string): Promise<User> {

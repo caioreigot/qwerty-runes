@@ -12,15 +12,12 @@ export class AuthService {
     password: string,
     remember: boolean,
   ): Promise<{ id: number; nickname: string; remember: boolean }> {
-    console.log('validate in auth.service called');
     try {
       const user = await this.userRepository.validate(nickname, password);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { passwordHash, ...rest } = user;
-      console.log('validate() in auth.service ->', { ...rest, remember });
       return { ...rest, remember };
     } catch (error) {
-      console.log(error);
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
           throw new HttpException(
