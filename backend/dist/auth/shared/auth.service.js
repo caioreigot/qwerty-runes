@@ -31,12 +31,15 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async validate(nickname, password, remember) {
+        console.log('validate in auth.service called');
         try {
             const user = await this.userRepository.validate(nickname, password);
             const { passwordHash } = user, rest = __rest(user, ["passwordHash"]);
+            console.log('validate() in auth.service ->', Object.assign(Object.assign({}, rest), { remember }));
             return Object.assign(Object.assign({}, rest), { remember });
         }
         catch (error) {
+            console.log(error);
             if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
                     throw new common_1.HttpException('Nickname ou senha errados, não foi possível logar.', common_1.HttpStatus.UNAUTHORIZED);
