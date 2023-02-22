@@ -21,6 +21,8 @@ interface ScoreboardItem {
 interface GeneralKnowledgeState {
   players: string[];
   scoreboard: ScoreboardItem[];
+  playersAnsweredCorrectly: string[];
+  correctAnswer: string | null;
   timerInSeconds: number;
   gameStarted: boolean;
   board: Board | null;
@@ -34,26 +36,34 @@ interface GeneralKnowledgeState {
 export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
 
   roomCode: string | null = null;
-  correctAnswer: string | null = null;
   canShowQuestion = false;
   state: GeneralKnowledgeState = {
     players: [],
     scoreboard: [],
+    playersAnsweredCorrectly: [],
     timerInSeconds: 0,
+    correctAnswer: null,
     gameStarted: false,
     board: null,
   };
 
   idsConfirmed: number[] = [];
 
-  get myScoreboardItem() {
-    const nickname = this.localStorageService.getUserNickname();
+  get myNickname() {
+    return this.localStorageService.getUserNickname() ?? '';
+  }
 
+  get myScoreboardItem() {
+    const nickname = this.myNickname;
     if (!nickname) return;
     
     return this.state.scoreboard.find((scoreboardItem) => {
       return scoreboardItem.nickname === nickname;
     });
+  }
+
+  get iAnsweredCorrectly() {
+    return this.state.playersAnsweredCorrectly.includes(this.myNickname);
   }
 
   constructor(
@@ -103,10 +113,16 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
       console.log('state changed:', newState);
       this.state = newState;
 
-      if (newState.board && this.idsConfirmed.indexOf(newState.board.id) < 0) {
+      // Se a "board" foi preenchida e o ID ainda não foi confirmado, confirma
+      if (newState.board && !this.idsConfirmed.includes(newState.board.id)) {
         const questionId = newState.board.id;
         this.socket.emit('confirm-question-received', questionId);
         this.idsConfirmed.push(questionId);
+      }
+
+      // Se a resposta correta foi enviada, então é porque o tempo acabou
+      if (newState.correctAnswer) {
+        this.canShowQuestion = false;
       }
     });
 
@@ -114,9 +130,9 @@ export class GeneralKnowledgeComponent implements OnInit, OnDestroy {
       this.canShowQuestion = true;
     });
 
-    this.socket.on('question-time-over', (correctAnswer: string) => {
+    this.socket.on('game-ended', () => {
       this.canShowQuestion = false;
-      this.correctAnswer = correctAnswer;
+      alert('O jogo acabou!');
     });
   }
 

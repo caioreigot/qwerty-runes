@@ -8,12 +8,16 @@ import {
 
 import { MiniGameType } from '../models/mini-game';
 import { GameRoomsService } from './game-rooms.service';
+import { GeneralKnowledgeService } from './general-knowledge.service';
 
 @WebSocketGateway({ cors: true })
 export class GameGateway implements OnGatewayInit {
   @WebSocketServer() server: Server;
 
-  constructor(private gameRoomsService: GameRoomsService) {}
+  constructor(
+    private gameRoomsService: GameRoomsService,
+    private generalKnowledgeService: GeneralKnowledgeService,
+  ) {}
 
   afterInit(server: Server) {
     this.gameRoomsService.startCleaningEmptyRoomsRoutine(server);
@@ -40,18 +44,18 @@ export class GameGateway implements OnGatewayInit {
     }
   }
 
-  @SubscribeMessage('answer')
-  answer(client: Socket, data: { answer: string }) {
-    this.gameRoomsService.receiveAnswer(this.server, client, data.answer);
-  }
-
   @SubscribeMessage('exit')
   exit(client: Socket) {
     this.gameRoomsService.leaveAllRooms(client);
   }
 
+  @SubscribeMessage('answer')
+  answer(client: Socket, data: { answer: string }) {
+    this.generalKnowledgeService.receiveAnswer(this.server, client, data.answer);
+  }
+
   @SubscribeMessage('confirm-question-received')
   confirmQuestionReceived(client: Socket, data: { id: number }) {
-    this.gameRoomsService.confirmQuestionReceived(this.server, client, data.id);
+    this.generalKnowledgeService.confirmQuestionReceived(this.server, client, data.id);
   }
 }

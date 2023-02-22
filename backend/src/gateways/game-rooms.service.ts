@@ -4,9 +4,8 @@ import { Server, Socket } from 'socket.io';
 import {
   GeneralKnowledgeGameState,
   GeneralKnowledgeQuestionType,
-  ScoreboardItem,
 } from '../models/general-knowledge';
-import { MiniGameRoom, MiniGameType } from '../models/mini-game';
+import { GameState, MiniGameRoom, MiniGameType } from '../models/mini-game';
 import { GeneralKnowledgeRepository } from 'src/repositories/general-knowledge-repository';
 
 @Injectable()
@@ -43,11 +42,16 @@ export class GameRoomsService {
 
     const joinRoomAndEmitCode = (roomCode: string) => {
       const newMiniGameRoom: MiniGameRoom = (function () {
-        switch (miniGameType) {
-          case MiniGameType.GENERAL_KNOWLEDGE:
-            const gameState = new GeneralKnowledgeGameState(hostNickname, hostSocket.id);
-            return new MiniGameRoom(roomCode, miniGameType, gameState);
-        }
+        const gameState: GameState<any> = (function () {
+          switch (miniGameType) {
+            case MiniGameType.GENERAL_KNOWLEDGE:
+              return new GeneralKnowledgeGameState(hostNickname, hostSocket.id);
+            default:
+              throw new Error('GameState não instanciado.');
+          }
+        })();
+
+        return new MiniGameRoom(roomCode, miniGameType, gameState);
       })();
 
       GameRoomsService.rooms.push(newMiniGameRoom);
@@ -105,11 +109,8 @@ export class GameRoomsService {
       }
     }
 
-    targetRoom.state.public.players.push({ nickname, socketId: socket.id });
-
-    if (targetRoom.state instanceof GeneralKnowledgeGameState) {
-      targetRoom.state.public.scoreboard.push(new ScoreboardItem(nickname));
-    }
+    const player = { nickname: nickname, socketId: socket.id };
+    targetRoom.state.public.onPlayerJoin(player);
 
     socket.join(roomCode);
     socket.emit('entered-room');
@@ -126,18 +127,17 @@ export class GameRoomsService {
     roomToStartGame.state.public.gameStarted = true;
 
     if (room.state instanceof GeneralKnowledgeGameState) {
-      room.state.boardIdQueue =
+      room.state.boardQuestionsIdQueue =
         await this.generalKnowledgeRepository.getApprovedQuestionIdentifiers(20);
 
       const question = await this.generalKnowledgeRepository.getQuestion(
-        room.state.boardIdQueue[0],
+        room.state.boardQuestionsIdQueue[0],
       );
 
       if (!question) return;
 
       // Retira o ID que foi atualmente usado
-      room.state.boardIdQueue.splice(0, 1);
-
+      room.state.boardQuestionsIdQueue.splice(0, 1);
       room.state.currentAcceptableAnswers = question.acceptableAnswers;
 
       room.state.public.board = {
@@ -146,79 +146,11 @@ export class GameRoomsService {
         type: question.type as GeneralKnowledgeQuestionType,
         content: question.content,
       };
-
-      server.to(roomToStartGame.code).emit('state-changed', room.state.public);
+    } else {
+      throw Error('Está faltando uma implementação de início de jogo para o GameState passado.');
     }
-  }
 
-  confirmQuestionReceived(server: Server, socket: Socket, questionId: number) {
-    // Acha a sala em que o socket está conectado
-    const room = GameRoomsService.rooms.find((room) => {
-      return socket.rooms.has(room.code);
-    });
-
-    if (room?.state instanceof GeneralKnowledgeGameState) {
-      const roomReceiptConfirmations = room.state.receiptConfirmations;
-
-      let receiptConfirmationItem = roomReceiptConfirmations.find(
-        (confirmation) => confirmation.questionId === questionId,
-      );
-
-      if (!receiptConfirmationItem) {
-        roomReceiptConfirmations.push({ questionId, confirmedSocketIds: [] });
-        receiptConfirmationItem = roomReceiptConfirmations[roomReceiptConfirmations.length - 1];
-      }
-
-      // Adiciona o ID do socket como alguém que confirmou o recebimento da questão
-      receiptConfirmationItem.confirmedSocketIds.push(socket.id);
-      const players = room.state.public.players;
-
-      let allIdsPresent = true;
-
-      // Loop que checa se algum ID não está dentro do array de confirmações
-      for (let i = 0; i < players.length; i++) {
-        // Se o ID não estiver confirmado, passa o valor "false" para "allIdsPresent"
-        if (!receiptConfirmationItem.confirmedSocketIds.includes(players[i].socketId)) {
-          allIdsPresent = false;
-          break;
-        }
-      }
-
-      // Se todos os IDs estiverem presentes, envia ao frontend a confirmação de que todos receberam a questão
-      if (allIdsPresent) {
-        // Como a questão já foi confirmada, ela é removida do array de receiptConfirmations
-        const indexToRemove = room.state.receiptConfirmations.indexOf(receiptConfirmationItem);
-        room.state.receiptConfirmations.splice(indexToRemove, 1);
-        room.state.resetTimer();
-
-        // Começa a decrementar o contador
-        this.startDecreasingTimerAndEmit(server, room);
-
-        server.to(room.code).emit('all-sockets-ready');
-      }
-    }
-  }
-
-  private splitAcceptableAnswers(acceptableAnswers: string): string[] {
-    return acceptableAnswers?.split(',').map((answer) => answer.trim()) ?? [];
-  }
-
-  private startDecreasingTimerAndEmit(server: Server, room: MiniGameRoom) {
-    const decrementer = setInterval(() => {
-      const roomState = room.state as GeneralKnowledgeGameState;
-      const timer = roomState.public.timerInSeconds;
-
-      if (timer <= 0) {
-        const acceptableAnswers = this.splitAcceptableAnswers(roomState.currentAcceptableAnswers);
-
-        server.to(room.code).emit('question-time-over', acceptableAnswers[0]);
-        clearInterval(decrementer);
-        return;
-      }
-
-      roomState.public.timerInSeconds--;
-      server.to(room.code).emit('state-changed', room.state.public);
-    }, 1000);
+    server.to(roomToStartGame.code).emit('state-changed', room.state.public);
   }
 
   /** @returns retorna a sala do mini-jogo caso todos os players estejam prontos */
@@ -251,45 +183,6 @@ export class GameRoomsService {
     }
 
     return null;
-  }
-
-  receiveAnswer(server: Server, socket: Socket, answer: string) {
-    GameRoomsService.rooms.forEach((room) => {
-      if (!(room.state instanceof GeneralKnowledgeGameState)) return;
-
-      const targetNickname = room.state.public.players.find(
-        (player) => player.socketId == socket.id,
-      )?.nickname;
-
-      // Se o player não está nessa sala, retorna para ir para próxima iteração
-      if (!targetNickname) return;
-
-      // Transforma as respostas em lower case
-      const answersLowerCase = this.splitAcceptableAnswers(room.state.currentAcceptableAnswers).map(
-        (answer) => answer.toLowerCase(),
-      );
-
-      // Vê se a resposta do jogador (em lower case) bate com uma das respostas aceitaveis (em lower case)
-      const playerAnsweredCorrectly = answersLowerCase.includes(answer.toLowerCase());
-
-      if (room.state instanceof GeneralKnowledgeGameState) {
-        room.state.public.scoreboard.forEach((scoreboardItem) => {
-          if (scoreboardItem.nickname === targetNickname) {
-            if (playerAnsweredCorrectly) {
-              scoreboardItem.score += (
-                room.state as GeneralKnowledgeGameState
-              ).public.timerInSeconds;
-
-              return;
-            }
-
-            scoreboardItem.lastGuess = answer;
-          }
-        });
-      }
-
-      server.to(room.code).emit('state-changed', room.state.public);
-    });
   }
 
   exitRoomsWhenDisconnecting(socket: Socket) {

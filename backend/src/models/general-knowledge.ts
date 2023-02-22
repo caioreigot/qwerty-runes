@@ -20,9 +20,16 @@ class Board {
 }
 
 export class GeneralKnowledgeGamePublicState extends PublicState {
+  playersAnsweredCorrectly: string[] = [];
+  correctAnswer: string | null;
   scoreboard: Scoreboard[] = [];
   timerInSeconds = 12;
   board: Board | null = null;
+
+  onPlayerJoin(player: Player) {
+    this.players.push(player);
+    this.scoreboard.push(new ScoreboardItem(player.nickname));
+  }
 
   toggleReady(player: Player) {
     const targetPlayer = this.scoreboard.find((scoreboardItem) => {
@@ -62,7 +69,7 @@ export class ScoreboardItem {
 
 export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePublicState> {
   timeInSecondsToAnswer = 12;
-  boardIdQueue: number[] = [];
+  boardQuestionsIdQueue: number[] = [];
   receiptConfirmations: { questionId: number; confirmedSocketIds: string[] }[] = [];
   currentAcceptableAnswers: string;
 

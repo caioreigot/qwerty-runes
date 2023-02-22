@@ -24,9 +24,9 @@
         src="{{ state.board.content }}">
     </ng-container>
 
-    <div class="correct-answer" *ngIf="correctAnswer">
+    <div class="correct-answer" *ngIf="state.correctAnswer">
       <p>A resposta era</p>
-      <h1>{{ correctAnswer }}</h1>
+      <h1>{{ state.correctAnswer }}</h1>
     </div>
 
     <button class="ready-button"
@@ -39,8 +39,9 @@
   
   <input class="answer-input"
     type="text"
-    placeholder="Digite aqui sua resposta"
-    [useInputValueOnEnter]="sendAnswer.bind(this)">
+    [placeholder]="iAnsweredCorrectly ? 'Você acertou!' : 'Digite aqui sua resposta'"
+    [useInputValueOnEnter]="sendAnswer.bind(this)"
+    [disabled]="iAnsweredCorrectly">
 </div>
 
 <div class="right-side">
@@ -52,7 +53,8 @@
       [score]="scoreboardItem.score"
       [gameStarted]="state.gameStarted"
       [isReady]="scoreboardItem.isReady"
-      [lastGuess]="scoreboardItem.lastGuess" />
+      [lastGuess]="scoreboardItem.lastGuess"
+      [answeredCorrectly]="state.playersAnsweredCorrectly.includes(scoreboardItem.nickname)" />
   </div>
   <a routerLink="/add-general-knowledge">Adicione sua própria pergunta</a>
 </div>

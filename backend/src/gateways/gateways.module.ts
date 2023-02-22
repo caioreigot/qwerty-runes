@@ -4,6 +4,7 @@ import { GameRoomsService } from './game-rooms.service';
 import { GeneralKnowledgeRepository } from '../repositories/general-knowledge-repository';
 import { PrismaGeneralKnowledgeRepository } from '../repositories/prisma/prisma-general-knowledge-repository';
 import { PrismaService } from '../database/prisma.service';
+import { GeneralKnowledgeService } from './general-knowledge.service';
 
 const UseGeneralKnowledgeRepositoryWithPrisma = {
   provide: GeneralKnowledgeRepository,
@@ -15,6 +16,7 @@ const UseGeneralKnowledgeRepositoryWithPrisma = {
     PrismaService,
     GameGateway,
     GameRoomsService,
+    GeneralKnowledgeService,
     UseGeneralKnowledgeRepositoryWithPrisma,
   ],
 })

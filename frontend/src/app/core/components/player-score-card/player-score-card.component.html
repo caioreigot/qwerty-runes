@@ -1,4 +1,8 @@
-<div class="card" [ngClass]="{ 'ready': isReady && !gameStarted, 'notReady': !isReady && !gameStarted }">
+<div class="card" [ngClass]="{
+  'ready': isReady && !gameStarted,
+  'notReady': !isReady && !gameStarted,
+  'answeredCorrectly': answeredCorrectly
+}">
   <span class="score">{{ score }}</span>
   <div>
     <span class="nickname">{{ nickname }}</span>
