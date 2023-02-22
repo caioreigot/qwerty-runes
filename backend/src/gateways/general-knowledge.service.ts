@@ -145,10 +145,17 @@ export class GeneralKnowledgeService {
             if (playerAnsweredCorrectly) {
               const roomState = room.state as GeneralKnowledgeGameState;
 
-              scoreboardItem.score += roomState.public.timerInSeconds;
+              // Se não foi o primeiro jogador a adivinhar, perde 1 ponto do total ao acertar
+              if (roomState.public.playersAnsweredCorrectly.length >= 1) {
+                scoreboardItem.score += Math.max(roomState.public.timerInSeconds - 1, 1);
+              } else {
+                scoreboardItem.score += roomState.public.timerInSeconds;
+              }
+
               roomState.public.playersAnsweredCorrectly.push(targetNickname);
               scoreboardItem.lastGuess = '';
 
+              // Retorna para que o "lastGuess" não seja atribuido
               return;
             }
 
