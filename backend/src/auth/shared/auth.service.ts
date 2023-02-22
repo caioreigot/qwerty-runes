@@ -16,7 +16,7 @@ export class AuthService {
       const user = await this.userRepository.validate(nickname, password);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { passwordHash, ...rest } = user;
-      console.log({ ...rest, remember });
+      console.log('validate() in auth.service ->', { ...rest, remember });
       return { ...rest, remember };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
