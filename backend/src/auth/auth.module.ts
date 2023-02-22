@@ -1,7 +1,7 @@
-import { jwtConstants } from './shared/constants';
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './shared/constants';
 
 import { PrismaService } from '../database/prisma.service';
 import { AuthService } from './shared/auth.service';
@@ -14,7 +14,7 @@ import { JwtStrategy } from './shared/jwt.strategy';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET ?? jwtConstants.secret,
       signOptions: { expiresIn: '336h' },
     }),
   ],
