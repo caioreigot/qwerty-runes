@@ -11,6 +11,7 @@ import { GatewaysModule } from './gateways/gateways.module';
 import { GeneralKnowledgeController } from './controllers/general-knowledge/general-knowledge.controller';
 import { GeneralKnowledgeRepository } from './repositories/general-knowledge-repository';
 import { PrismaGeneralKnowledgeRepository } from './repositories/prisma/prisma-general-knowledge-repository';
+import { HealthzController } from './controllers/healthz/healthz.controller';
 
 const ConfiguredServeStaticModule = ServeStaticModule.forRoot({
   rootPath: join(__dirname, 'front'),
@@ -28,7 +29,7 @@ const UseGeneralKnowledgeRepositoryWithPrisma = {
 
 @Module({
   imports: [AuthModule, GatewaysModule, ConfiguredServeStaticModule],
-  controllers: [UserController, GeneralKnowledgeController],
+  controllers: [UserController, GeneralKnowledgeController, HealthzController],
   providers: [
     PrismaService,
     UseUserRepositoryWithPrisma,
