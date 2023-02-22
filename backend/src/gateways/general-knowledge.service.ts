@@ -144,8 +144,10 @@ export class GeneralKnowledgeService {
           if (scoreboardItem.nickname === targetNickname) {
             if (playerAnsweredCorrectly) {
               const roomState = room.state as GeneralKnowledgeGameState;
+
               scoreboardItem.score += roomState.public.timerInSeconds;
               roomState.public.playersAnsweredCorrectly.push(targetNickname);
+              scoreboardItem.lastGuess = '';
 
               return;
             }

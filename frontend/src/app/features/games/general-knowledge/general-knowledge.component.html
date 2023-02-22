@@ -1,47 +1,59 @@
 <div class="left-side">
-  <ng-container *ngIf="state.board && canShowQuestion">
-    <h1 class="question-title">
-      {{ state.board.questionTitle }}
-    </h1>
-    <span class="timer">
-      {{ state.timerInSeconds }}s restantes.
-    </span>
+  <ng-container *ngIf="!gameEnded; else gameEndedScreen">
+    <ng-container *ngIf="state.board && canShowQuestion">
+      <h1 class="question-title">
+        {{ state.board.questionTitle }}
+      </h1>
+      <span class="timer">
+        {{ state.timerInSeconds }}s restantes.
+      </span>
+    
+      <div class="white-divider"></div>
+    </ng-container>
   
-    <div class="white-divider"></div>
+    <div class="board">
+      <ng-container *ngIf="state.board && canShowQuestion">
+        <p
+          class="text-content"
+          *ngIf="state.board.type === 'text'"
+        >
+          {{ state.board.content }}
+        </p>
+        <img
+          class="image-content"
+          *ngIf="state.board.type === 'image'"
+          src="{{ state.board.content }}">
+      </ng-container>
+  
+      <div class="correct-answer" *ngIf="state.correctAnswer">
+        <p>A resposta era</p>
+        <h1>{{ state.correctAnswer }}</h1>
+      </div>
+  
+      <button class="ready-button"
+        [ngClass]="myScoreboardItem?.isReady ? 'ready' : 'notReady'"
+        *ngIf="!state.gameStarted"
+        (click)="onReadyButtonClick()">
+        Pronto
+      </button>
+    </div>
+    
+    <input #answerInput class="answer-input"
+      type="text"
+      [placeholder]="iAnsweredCorrectly ? 'Você acertou!' : 'Digite aqui sua resposta'"
+      [useInputValueOnEnter]="sendAnswer.bind(this)"
+      [disabled]="iAnsweredCorrectly">
   </ng-container>
 
-  <div class="board">
-    <ng-container *ngIf="state.board && canShowQuestion">
-      <p
-        class="text-content"
-        *ngIf="state.board.type === 'text'"
-      >
-        {{ state.board.content }}
-      </p>
-      <img
-        class="image-content"
-        *ngIf="state.board.type === 'image'"
-        src="{{ state.board.content }}">
-    </ng-container>
-
-    <div class="correct-answer" *ngIf="state.correctAnswer">
-      <p>A resposta era</p>
-      <h1>{{ state.correctAnswer }}</h1>
+  <ng-template #gameEndedScreen>
+    <div class="game-end">
+      <h1>FIM DE JOGO</h1>
+      <h3>{{ winner.nickname }} ganhou com {{ winner.score }} {{ winner.score === 1 ? 'ponto' : 'pontos' }}.</h3>
+      <button class="light-button" routerLink="/games">
+        Sair da sala
+      </button>
     </div>
-
-    <button class="ready-button"
-      [ngClass]="myScoreboardItem?.isReady ? 'ready' : 'notReady'"
-      *ngIf="!state.gameStarted"
-      (click)="onReadyButtonClick()">
-      Pronto
-    </button>
-  </div>
-  
-  <input class="answer-input"
-    type="text"
-    [placeholder]="iAnsweredCorrectly ? 'Você acertou!' : 'Digite aqui sua resposta'"
-    [useInputValueOnEnter]="sendAnswer.bind(this)"
-    [disabled]="iAnsweredCorrectly">
+  </ng-template>
 </div>
 
 <div class="right-side">
@@ -49,12 +61,13 @@
   <div class="scoreboard">
     <app-player-score-card *ngFor="let scoreboardItem of state.scoreboard"
       class="player-score-card"
+      [answeredCorrectly]="state.playersAnsweredCorrectly.includes(scoreboardItem.nickname)"
+      [ngStyle]="{ 'order': scoreboardOrder[scoreboardItem.nickname] }"
       [nickname]="scoreboardItem.nickname"
       [score]="scoreboardItem.score"
-      [gameStarted]="state.gameStarted"
       [isReady]="scoreboardItem.isReady"
       [lastGuess]="scoreboardItem.lastGuess"
-      [answeredCorrectly]="state.playersAnsweredCorrectly.includes(scoreboardItem.nickname)" />
+      [gameStarted]="state.gameStarted" />
   </div>
   <a routerLink="/add-general-knowledge">Adicione sua própria pergunta</a>
 </div>
