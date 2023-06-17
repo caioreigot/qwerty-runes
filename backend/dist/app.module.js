@@ -15,12 +15,12 @@ const prisma_service_1 = require("./database/prisma.service");
 const user_repository_1 = require("./repositories/user-repository");
 const prisma_user_repository_1 = require("./repositories/prisma/prisma-user-repository");
 const serve_static_1 = require("@nestjs/serve-static");
-const user_controller_1 = require("./controllers/user/user.controller");
 const gateways_module_1 = require("./gateways/gateways.module");
-const general_knowledge_controller_1 = require("./controllers/general-knowledge/general-knowledge.controller");
 const general_knowledge_repository_1 = require("./repositories/general-knowledge-repository");
 const prisma_general_knowledge_repository_1 = require("./repositories/prisma/prisma-general-knowledge-repository");
-const healthz_controller_1 = require("./controllers/healthz/healthz.controller");
+const user_controller_1 = require("./controllers/user.controller");
+const general_knowledge_controller_1 = require("./controllers/general-knowledge.controller");
+const healthz_controller_1 = require("./controllers/healthz.controller");
 const ConfiguredServeStaticModule = serve_static_1.ServeStaticModule.forRoot({
     rootPath: (0, path_1.join)(__dirname, 'front'),
 });

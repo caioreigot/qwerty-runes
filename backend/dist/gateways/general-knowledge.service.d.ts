@@ -1,6 +1,6 @@
 import { GeneralKnowledgeRepository } from '../repositories/general-knowledge-repository';
 import { Server, Socket } from 'socket.io';
-import { MiniGameRoom } from '../models/mini-game';
+import { MiniGameRoom } from 'src/models/mini-game-room';
 export declare class GeneralKnowledgeService {
     private generalKnowledgeRepository;
     constructor(generalKnowledgeRepository: GeneralKnowledgeRepository);

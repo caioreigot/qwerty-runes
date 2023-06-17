@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class SnackbarService {
 
-  snackbar: Snackbar = new Snackbar();
+  private snackbar: Snackbar = new Snackbar();
 
   showMessage(message: string, isError: boolean = false) {
     if (!message) {

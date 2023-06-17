@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GeneralKnowledgeService = void 0;
 const general_knowledge_repository_1 = require("../repositories/general-knowledge-repository");
 const common_1 = require("@nestjs/common");
-const general_knowledge_1 = require("../models/general-knowledge");
 const game_rooms_service_1 = require("./game-rooms.service");
+const gk_game_state_1 = require("../models/general-knowledge/gk-game-state");
 let GeneralKnowledgeService = class GeneralKnowledgeService {
     constructor(generalKnowledgeRepository) {
         this.generalKnowledgeRepository = generalKnowledgeRepository;
@@ -22,7 +22,7 @@ let GeneralKnowledgeService = class GeneralKnowledgeService {
         const room = game_rooms_service_1.GameRoomsService.rooms.find((room) => {
             return socket.rooms.has(room.code);
         });
-        if ((room === null || room === void 0 ? void 0 : room.state) instanceof general_knowledge_1.GeneralKnowledgeGameState) {
+        if ((room === null || room === void 0 ? void 0 : room.state) instanceof gk_game_state_1.GeneralKnowledgeGameState) {
             const roomReceiptConfirmations = room.state.receiptConfirmations;
             let receiptConfirmationItem = roomReceiptConfirmations.find((confirmation) => confirmation.questionId === questionId);
             if (!receiptConfirmationItem) {
@@ -70,7 +70,7 @@ let GeneralKnowledgeService = class GeneralKnowledgeService {
         }, 1000);
     }
     async sendNewQuestionOrFinishGame(server, room) {
-        if (!(room.state instanceof general_knowledge_1.GeneralKnowledgeGameState))
+        if (!(room.state instanceof gk_game_state_1.GeneralKnowledgeGameState))
             return;
         if (room.state.boardQuestionsIdQueue.length === 0) {
             server.to(room.code).emit('game-ended');
@@ -95,14 +95,14 @@ let GeneralKnowledgeService = class GeneralKnowledgeService {
     receiveAnswer(server, socket, answer) {
         game_rooms_service_1.GameRoomsService.rooms.forEach((room) => {
             var _a;
-            if (!(room.state instanceof general_knowledge_1.GeneralKnowledgeGameState))
+            if (!(room.state instanceof gk_game_state_1.GeneralKnowledgeGameState))
                 return;
             const targetNickname = (_a = room.state.public.players.find((player) => player.socketId == socket.id)) === null || _a === void 0 ? void 0 : _a.nickname;
             if (!targetNickname)
                 return;
             const answersLowerCase = this.splitAcceptableAnswers(room.state.currentAcceptableAnswers).map((answer) => answer.toLowerCase());
             const playerAnsweredCorrectly = answersLowerCase.includes(answer.toLowerCase());
-            if (room.state instanceof general_knowledge_1.GeneralKnowledgeGameState) {
+            if (room.state instanceof gk_game_state_1.GeneralKnowledgeGameState) {
                 room.state.public.scoreboard.forEach((scoreboardItem) => {
                     if (scoreboardItem.nickname === targetNickname) {
                         if (playerAnsweredCorrectly) {

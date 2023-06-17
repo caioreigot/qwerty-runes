@@ -1,8 +1,8 @@
+import { GeneralKnowledgeQuestionType } from 'src/app/core/models/general-knowledge-question-type';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { LocalStorageService } from '../../../shared/services/local-storage.service';
 import { ActivatedRoute } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
-import { GeneralKnowledgeQuestionType } from '../../../core/models/GeneralKnowledgeQuestionType';
-import { LocalStorageService } from '../../../shared/services/local-storage.service';
 
 interface Board {
   id: number;

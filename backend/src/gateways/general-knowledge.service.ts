@@ -1,12 +1,11 @@
 import { GeneralKnowledgeRepository } from '../repositories/general-knowledge-repository';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import {
-  GeneralKnowledgeGameState,
-  GeneralKnowledgeQuestionType,
-} from '../models/general-knowledge';
-import { MiniGameRoom } from '../models/mini-game';
 import { GameRoomsService } from './game-rooms.service';
+import { GeneralKnowledgeGameState } from 'src/models/general-knowledge/gk-game-state';
+import { MiniGameRoom } from 'src/models/mini-game-room';
+import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
+import { Player } from 'src/models/player';
 
 @Injectable()
 export class GeneralKnowledgeService {
@@ -18,6 +17,7 @@ export class GeneralKnowledgeService {
       return socket.rooms.has(room.code);
     });
 
+    // Se o mini-jogo for o de "conhecimento geral"
     if (room?.state instanceof GeneralKnowledgeGameState) {
       const roomReceiptConfirmations = room.state.receiptConfirmations;
 
@@ -125,7 +125,7 @@ export class GeneralKnowledgeService {
       if (!(room.state instanceof GeneralKnowledgeGameState)) return;
 
       const targetNickname = room.state.public.players.find(
-        (player) => player.socketId == socket.id,
+        (player: Player) => player.socketId == socket.id,
       )?.nickname;
 
       // Se o player não está nessa sala, retorna para ir para próxima iteração

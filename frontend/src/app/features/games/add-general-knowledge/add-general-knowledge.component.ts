@@ -1,9 +1,9 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { GeneralKnowledgeQuestionType } from '../../../core/models/GeneralKnowledgeQuestionType';
 import { SnackbarService } from '../../../shared/services/snackbar.service';
 import { BackendService } from '../../../shared/services/backend.service';
 import { UtilsService } from '../../../shared/services/utils.service';
+import { GeneralKnowledgeQuestionType } from 'src/app/core/models/general-knowledge-question-type';
 
 @Component({
   selector: 'app-add-general-knowledge',

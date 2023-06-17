@@ -1,5 +1,5 @@
 import { GeneralKnowledgeQuestion } from '@prisma/client';
-import { GeneralKnowledgeQuestionType } from '../models/general-knowledge';
+import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
 
 export abstract class GeneralKnowledgeRepository {
   abstract addNewQuestion(

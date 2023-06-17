@@ -6,12 +6,12 @@ import { PrismaService } from './database/prisma.service';
 import { UserRepository } from './repositories/user-repository';
 import { PrismaUserRepository } from './repositories/prisma/prisma-user-repository';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { UserController } from './controllers/user/user.controller';
 import { GatewaysModule } from './gateways/gateways.module';
-import { GeneralKnowledgeController } from './controllers/general-knowledge/general-knowledge.controller';
 import { GeneralKnowledgeRepository } from './repositories/general-knowledge-repository';
 import { PrismaGeneralKnowledgeRepository } from './repositories/prisma/prisma-general-knowledge-repository';
-import { HealthzController } from './controllers/healthz/healthz.controller';
+import { UserController } from './controllers/user.controller';
+import { GeneralKnowledgeController } from './controllers/general-knowledge.controller';
+import { HealthzController } from './controllers/healthz.controller';
 
 const ConfiguredServeStaticModule = ServeStaticModule.forRoot({
   rootPath: join(__dirname, 'front'),

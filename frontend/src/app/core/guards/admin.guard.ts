@@ -19,8 +19,8 @@ export class AdminGuard implements CanActivate {
   canActivate() {
     return new Observable<boolean>((observer) => {
       this.backendService.isUserAdmin().subscribe({
-        error: () => this.onError(observer),
-        complete: () => observer.next(true)
+        complete: () => observer.next(true),
+        error: () => this.onError(observer)
       });
     })
   }

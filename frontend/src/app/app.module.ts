@@ -1,4 +1,4 @@
-import { BaseUrlHttpInterceptor } from './core/interceptors/BaseUrlHttpInterceptor';
+import { BaseUrlHttpInterceptor } from './core/interceptors/base-url-http-interceptor';
 import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RegistrationModule } from './features/registration/registration.module';

@@ -1,7 +1,7 @@
 import { GeneralKnowledgeQuestion } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
-import { GeneralKnowledgeQuestionType } from '../../models/general-knowledge';
 import { GeneralKnowledgeRepository } from '../general-knowledge-repository';
+import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
 export declare class PrismaGeneralKnowledgeRepository implements GeneralKnowledgeRepository {
     private prisma;
     constructor(prisma: PrismaService);

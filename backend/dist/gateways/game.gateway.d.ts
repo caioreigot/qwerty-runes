@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { OnGatewayInit } from '@nestjs/websockets';
-import { MiniGameType } from '../models/mini-game';
+import { MiniGameType } from 'src/models/mini-game-type';
 import { GameRoomsService } from './game-rooms.service';
 import { GeneralKnowledgeService } from './general-knowledge.service';
 export declare class GameGateway implements OnGatewayInit {

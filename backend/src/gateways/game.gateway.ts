@@ -6,7 +6,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 
-import { MiniGameType } from '../models/mini-game';
+import { MiniGameType } from 'src/models/mini-game-type';
 import { GameRoomsService } from './game-rooms.service';
 import { GeneralKnowledgeService } from './general-knowledge.service';
 

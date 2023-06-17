@@ -1,5 +1,5 @@
 import { GeneralKnowledgeQuestion } from '@prisma/client';
-import { GeneralKnowledgeQuestionType } from '../models/general-knowledge';
+import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
 export declare abstract class GeneralKnowledgeRepository {
     abstract addNewQuestion(questionTitle: string, acceptableAnswers: string, type: GeneralKnowledgeQuestionType, content: string, approved: boolean): Promise<void>;
     abstract getQuestion(id: number): Promise<GeneralKnowledgeQuestion>;

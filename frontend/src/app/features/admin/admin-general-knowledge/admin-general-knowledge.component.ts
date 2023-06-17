@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BackendService } from '../../../shared/services/backend.service';
-import { GeneralKnowledgeQuestion } from '../../../core/models/GeneralKnowledgeQuestion';
-import { GeneralKnowledgeQuestionType } from '../../../core/models/GeneralKnowledgeQuestionType';
 import { SnackbarService } from '../../../shared/services/snackbar.service';
+import { GeneralKnowledgeQuestion } from 'src/app/core/models/general-knowledge-question';
+import { GeneralKnowledgeQuestionType } from 'src/app/core/models/general-knowledge-question-type';
 
 @Component({
   selector: 'app-admin-general-knowledge',

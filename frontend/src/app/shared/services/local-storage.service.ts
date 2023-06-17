@@ -4,9 +4,9 @@ import jwt_decode from 'jwt-decode';
 @Injectable({ providedIn: 'root' })
 export class LocalStorageService {
 
-  TOKEN_ID = 'jwt_token';
+  private TOKEN_ID = 'jwt_token';
 
-  setToken(token: string) {
+  setToken(token: string): void {
     localStorage.setItem(this.TOKEN_ID, token);
   }
 

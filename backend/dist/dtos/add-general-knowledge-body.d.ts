@@ -1,4 +1,4 @@
-import { GeneralKnowledgeQuestionType } from '../models/general-knowledge';
+import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
 export declare class AddGeneralKnowledgeBody {
     questionTitle: string;
     acceptableAnswers: string;

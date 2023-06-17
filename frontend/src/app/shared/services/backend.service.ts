@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GeneralKnowledgeQuestionType } from '../../core/models/GeneralKnowledgeQuestionType';
-import { GeneralKnowledgeQuestion } from '../../core/models/GeneralKnowledgeQuestion';
+import { GeneralKnowledgeQuestionType } from '../../core/models/general-knowledge-question-type';
+import { GeneralKnowledgeQuestion } from '../../core/models/general-knowledge-question';
 
 @Injectable({ providedIn: 'root' })
 export class BackendService {
@@ -27,7 +27,7 @@ export class BackendService {
 
   constructor(private http: HttpClient) {}
 
-  createUser(nickname: string, password: string) {
+  createUser(nickname: string, password: string): Observable<any> {
     const body = { nickname, password };
     return this.http.post(this.endpoints.user.create, body);
   }

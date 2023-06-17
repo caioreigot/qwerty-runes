@@ -1,6 +1,6 @@
 import { Transform, TransformFnParams } from 'class-transformer';
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { GeneralKnowledgeQuestionType } from '../models/general-knowledge';
+import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
 
 export class AddGeneralKnowledgeBody {
   @IsNotEmpty({ message: 'O título da pergunta não pode estar vazio.' })

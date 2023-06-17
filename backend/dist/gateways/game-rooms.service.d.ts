@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io';
-import { MiniGameRoom, MiniGameType } from '../models/mini-game';
 import { GeneralKnowledgeRepository } from 'src/repositories/general-knowledge-repository';
+import { MiniGameRoom } from 'src/models/mini-game-room';
+import { MiniGameType } from 'src/models/mini-game-type';
 export declare class GameRoomsService {
     private generalKnowledgeRepository;
     static rooms: MiniGameRoom[];

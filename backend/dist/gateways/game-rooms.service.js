@@ -13,9 +13,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GameRoomsService = void 0;
 const randomstring = require("randomstring");
 const common_1 = require("@nestjs/common");
-const general_knowledge_1 = require("../models/general-knowledge");
-const mini_game_1 = require("../models/mini-game");
 const general_knowledge_repository_1 = require("../repositories/general-knowledge-repository");
+const mini_game_room_1 = require("../models/mini-game-room");
+const mini_game_type_1 = require("../models/mini-game-type");
+const gk_game_state_1 = require("../models/general-knowledge/gk-game-state");
 let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
     constructor(generalKnowledgeRepository) {
         this.generalKnowledgeRepository = generalKnowledgeRepository;
@@ -45,13 +46,13 @@ let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
             const newMiniGameRoom = (function () {
                 const gameState = (function () {
                     switch (miniGameType) {
-                        case mini_game_1.MiniGameType.GENERAL_KNOWLEDGE:
-                            return new general_knowledge_1.GeneralKnowledgeGameState(hostNickname, hostSocket.id);
+                        case mini_game_type_1.MiniGameType.GENERAL_KNOWLEDGE:
+                            return new gk_game_state_1.GeneralKnowledgeGameState(hostNickname, hostSocket.id);
                         default:
                             throw new Error('GameState não instanciado.');
                     }
                 })();
-                return new mini_game_1.MiniGameRoom(roomCode, miniGameType, gameState);
+                return new mini_game_room_1.MiniGameRoom(roomCode, miniGameType, gameState);
             })();
             GameRoomsService_1.rooms.push(newMiniGameRoom);
             hostSocket.join(roomCode);
@@ -102,7 +103,7 @@ let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
         if (!roomToStartGame)
             return;
         roomToStartGame.state.public.gameStarted = true;
-        if (room.state instanceof general_knowledge_1.GeneralKnowledgeGameState) {
+        if (room.state instanceof gk_game_state_1.GeneralKnowledgeGameState) {
             room.state.boardQuestionsIdQueue =
                 await this.generalKnowledgeRepository.getApprovedQuestionIdentifiers(20);
             const question = await this.generalKnowledgeRepository.getQuestion(room.state.boardQuestionsIdQueue[0]);
@@ -131,7 +132,7 @@ let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
                     continue;
                 room.state.public.toggleReady(player);
                 server.to(room.code).emit('state-changed', room.state.public);
-                if (room.state instanceof general_knowledge_1.GeneralKnowledgeGameState) {
+                if (room.state instanceof gk_game_state_1.GeneralKnowledgeGameState) {
                     const playersNotReady = room.state.public.scoreboard.filter((scoreboard) => {
                         return scoreboard.isReady === false;
                     });

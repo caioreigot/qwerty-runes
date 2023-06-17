@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddGeneralKnowledgeBody = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-const general_knowledge_1 = require("../models/general-knowledge");
+const gk_question_type_1 = require("../models/general-knowledge/gk-question-type");
 class AddGeneralKnowledgeBody {
 }
 __decorate([
@@ -26,7 +26,7 @@ __decorate([
     __metadata("design:type", String)
 ], AddGeneralKnowledgeBody.prototype, "acceptableAnswers", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(general_knowledge_1.GeneralKnowledgeQuestionType),
+    (0, class_validator_1.IsEnum)(gk_question_type_1.GeneralKnowledgeQuestionType),
     __metadata("design:type", String)
 ], AddGeneralKnowledgeBody.prototype, "type", void 0);
 __decorate([

@@ -1,12 +1,12 @@
 import * as randomstring from 'randomstring';
 import { Injectable } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
-import {
-  GeneralKnowledgeGameState,
-  GeneralKnowledgeQuestionType,
-} from '../models/general-knowledge';
-import { GameState, MiniGameRoom, MiniGameType } from '../models/mini-game';
 import { GeneralKnowledgeRepository } from 'src/repositories/general-knowledge-repository';
+import { MiniGameRoom } from 'src/models/mini-game-room';
+import { GameState } from 'src/models/game-state';
+import { MiniGameType } from 'src/models/mini-game-type';
+import { GeneralKnowledgeGameState } from 'src/models/general-knowledge/gk-game-state';
+import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
 
 @Injectable()
 export class GameRoomsService {
@@ -84,7 +84,7 @@ export class GameRoomsService {
     }
   }
 
-  // Faz o socket entrar em uma sala e emite o novo public state com o novo player
+  // Faz o socket entrar em uma sala e emite o novo PublicState com o novo player
   joinRoom(server: Server, socket: Socket, nickname: string, roomCodeArg: string) {
     const roomCode = roomCodeArg.toUpperCase();
 
