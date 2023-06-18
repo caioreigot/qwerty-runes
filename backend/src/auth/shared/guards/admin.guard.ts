@@ -5,8 +5,8 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { UtilsService } from '../../controllers/shared/utils.service';
-import { UserRepository } from '../../repositories/user-repository';
+import { UtilsService } from 'src/controllers/shared/utils.service';
+import { UserRepository } from 'src/repositories/user-repository';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -16,14 +16,14 @@ export class AdminGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const payload = this.utilsService.getJwtTokenPayloadFromRequest(request);
 
-    // Se na requisição não houver um token
+    // Se não houver um token na requisição
     if (!payload) {
       this.throwForbiddenError();
     }
 
     const isAdmin = await this.userRepository.isAdmin(payload.nickname);
 
-    // Se houver um token mas o usuário não for um administrador
+    // Se o usuário não for admin
     if (!isAdmin) {
       this.throwForbiddenError();
     }
@@ -32,6 +32,9 @@ export class AdminGuard implements CanActivate {
   }
 
   throwForbiddenError() {
-    throw new HttpException('Você não tem permissão para acessar essa rota.', HttpStatus.FORBIDDEN);
+    throw new HttpException(
+      'Você não tem permissão para acessar essa rota.',
+      HttpStatus.FORBIDDEN
+    );
   }
 }

@@ -8,11 +8,12 @@
 
 <h1>Administradores:</h1>
 
-<ul>
-  <li *ngFor="let nickname of (adminNicknames | async)">
+<div class="rows-container">
+  <div class="row" *ngFor="let nickname of (adminNicknames | async)">
     <img (click)="removeAdmin(nickname)"
       title="Remover administrador"
       src="/assets/remove-admin.svg">
+
     <span>{{ nickname }}</span>
-  </li>
-</ul>
+  </div>
+</div>

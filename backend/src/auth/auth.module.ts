@@ -2,13 +2,12 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './shared/constants';
-
-import { PrismaService } from '../database/prisma.service';
 import { AuthService } from './shared/auth.service';
-import { LocalStrategyService } from './shared/local-strategy.service';
+import { JwtStrategy } from './shared/strategies/jwt.strategy';
+import { LocalStrategyService } from './shared/strategies/local-strategy.service';
+import { PrismaService } from '../database/prisma.service';
 import { UserRepository } from '../repositories/user-repository';
 import { PrismaUserRepository } from '../repositories/prisma/prisma-user-repository';
-import { JwtStrategy } from './shared/jwt.strategy';
 
 @Module({
   imports: [

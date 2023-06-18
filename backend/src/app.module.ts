@@ -28,8 +28,16 @@ const UseGeneralKnowledgeRepositoryWithPrisma = {
 };
 
 @Module({
-  imports: [AuthModule, GatewaysModule, ConfiguredServeStaticModule],
-  controllers: [UserController, GeneralKnowledgeController, HealthzController],
+  imports: [
+    AuthModule,
+    GatewaysModule,
+    ConfiguredServeStaticModule
+  ],
+  controllers: [
+    UserController,
+    GeneralKnowledgeController,
+    HealthzController
+  ],
   providers: [
     PrismaService,
     UseUserRepositoryWithPrisma,

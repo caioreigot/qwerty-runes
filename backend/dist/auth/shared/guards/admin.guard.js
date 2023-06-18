@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminGuard = void 0;
 const common_1 = require("@nestjs/common");
-const utils_service_1 = require("../../controllers/shared/utils.service");
-const user_repository_1 = require("../../repositories/user-repository");
+const utils_service_1 = require("../../../controllers/shared/utils.service");
+const user_repository_1 = require("../../../repositories/user-repository");
 let AdminGuard = class AdminGuard {
     constructor(utilsService, userRepository) {
         this.utilsService = utilsService;

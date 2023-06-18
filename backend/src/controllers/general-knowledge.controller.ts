@@ -5,10 +5,11 @@ import { UtilsService } from './shared/utils.service';
 import { UserRepository } from 'src/repositories/user-repository';
 import { GeneralKnowledgeRepository } from 'src/repositories/general-knowledge-repository';
 import { AddGeneralKnowledgeBody } from 'src/dtos/add-general-knowledge-body';
-import { AdminGuard } from 'src/auth/shared/admin.guard';
+import { AdminGuard } from 'src/auth/shared/guards/admin.guard';
 
 @Controller('general-knowledge')
 export class GeneralKnowledgeController {
+  
   constructor(
     private utilsService: UtilsService,
     private userRepository: UserRepository,

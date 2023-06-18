@@ -18,7 +18,7 @@ const utils_service_1 = require("./shared/utils.service");
 const user_repository_1 = require("../repositories/user-repository");
 const general_knowledge_repository_1 = require("../repositories/general-knowledge-repository");
 const add_general_knowledge_body_1 = require("../dtos/add-general-knowledge-body");
-const admin_guard_1 = require("../auth/shared/admin.guard");
+const admin_guard_1 = require("../auth/shared/guards/admin.guard");
 let GeneralKnowledgeController = class GeneralKnowledgeController {
     constructor(utilsService, userRepository, generalKnowledgeRepository) {
         this.utilsService = utilsService;

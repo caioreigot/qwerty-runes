@@ -9,10 +9,7 @@ export declare class AuthService {
         nickname: string;
         remember: boolean;
     }>;
-    login(user: {
-        id: number;
-        nickname: string;
-    }, remember: boolean): Promise<{
+    buildAndSendToken(nickname: string, remember: boolean): Promise<{
         access_token: string;
     }>;
 }

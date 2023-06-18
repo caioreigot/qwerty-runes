@@ -1,11 +1,13 @@
 import { Player } from './player';
 
 /*
-Cada mini-jogo tem seu próprio state público (aquilo que é passado para o front-end
-para que ele possa renderizar as informações na tela), o resto fica apenas do lado do servidor
+Cada mini-jogo tem seu próprio state público (aquilo que é passado
+para o front-end para que ele possa renderizar as informações na tela),
+o resto fica apenas do lado do servidor
 
-Cada mini-jogo (GameState) tem seu próprio PublicState, portanto, é necessário
-criar uma nova classe e extender a PublicState, para, então, criar o GameState
+Cada mini-jogo (GameState) tem seu próprio PublicState, portanto,
+é necessário criar uma nova classe e extender a PublicState,
+para, então, criar o GameState
 */
 export abstract class PublicState {
   players: Player[];

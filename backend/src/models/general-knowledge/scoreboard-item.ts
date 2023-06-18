@@ -1,4 +1,5 @@
 export class ScoreboardItem {
+  
   nickname: string;
   score: number;
   isReady: boolean;

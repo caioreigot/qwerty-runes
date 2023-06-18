@@ -6,6 +6,7 @@ import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-qu
 
 @Injectable()
 export class PrismaGeneralKnowledgeRepository implements GeneralKnowledgeRepository {
+  
   constructor(private prisma: PrismaService) {}
 
   async addNewQuestion(

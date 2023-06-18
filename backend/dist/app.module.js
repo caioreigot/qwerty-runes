@@ -36,8 +36,16 @@ let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, gateways_module_1.GatewaysModule, ConfiguredServeStaticModule],
-        controllers: [user_controller_1.UserController, general_knowledge_controller_1.GeneralKnowledgeController, healthz_controller_1.HealthzController],
+        imports: [
+            auth_module_1.AuthModule,
+            gateways_module_1.GatewaysModule,
+            ConfiguredServeStaticModule
+        ],
+        controllers: [
+            user_controller_1.UserController,
+            general_knowledge_controller_1.GeneralKnowledgeController,
+            healthz_controller_1.HealthzController
+        ],
         providers: [
             prisma_service_1.PrismaService,
             UseUserRepositoryWithPrisma,

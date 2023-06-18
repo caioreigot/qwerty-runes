@@ -2,6 +2,7 @@ import { GeneralKnowledgeQuestion } from '@prisma/client';
 import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
 
 export abstract class GeneralKnowledgeRepository {
+  
   abstract addNewQuestion(
     questionTitle: string,
     acceptableAnswers: string,
@@ -19,5 +20,7 @@ export abstract class GeneralKnowledgeRepository {
     changes: Partial<GeneralKnowledgeQuestion>,
   ): Promise<GeneralKnowledgeQuestion>;
 
-  abstract rejectQuestion(questionId: number): Promise<GeneralKnowledgeQuestion>;
+  abstract rejectQuestion(
+    questionId: number,
+  ): Promise<GeneralKnowledgeQuestion>;
 }

@@ -8,6 +8,7 @@ type Confirmation = {
 };
 
 export class GeneralKnowledgeGameState extends GameState<GeneralKnowledgeGamePublicState> {
+  
   timeInSecondsToAnswer = 12;
   boardQuestionsIdQueue: number[] = [];
   receiptConfirmations: Confirmation[] = [];

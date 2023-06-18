@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const client_1 = require("@prisma/client");
 const auth_service_1 = require("../auth/shared/auth.service");
-const local_auth_guard_1 = require("../auth/shared/local-auth.guard");
-const jwt_auth_guard_1 = require("../auth/shared/jwt-auth.guard");
 const common_1 = require("@nestjs/common");
 const user_body_1 = require("../dtos/user-body");
 const user_repository_1 = require("../repositories/user-repository");
-const admin_guard_1 = require("../auth/shared/admin.guard");
+const local_auth_guard_1 = require("../auth/shared/guards/local-auth.guard");
+const jwt_auth_guard_1 = require("../auth/shared/guards/jwt-auth.guard");
+const admin_guard_1 = require("../auth/shared/guards/admin.guard");
 let UserController = class UserController {
     constructor(userRepository, authService) {
         this.userRepository = userRepository;
@@ -40,8 +40,8 @@ let UserController = class UserController {
             throw error;
         }
     }
-    async validate(request) {
-        return this.authService.login(request.user, request.body.remember);
+    async login(request) {
+        return this.authService.buildAndSendToken(request.user.nickname, request.body.remember);
     }
     hasToken() {
         return;
@@ -73,7 +73,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "validate", null);
+], UserController.prototype, "login", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('token-login'),
@@ -113,7 +113,8 @@ __decorate([
 ], UserController.prototype, "addAdmin", null);
 UserController = __decorate([
     (0, common_1.Controller)('user'),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository, auth_service_1.AuthService])
+    __metadata("design:paramtypes", [user_repository_1.UserRepository,
+        auth_service_1.AuthService])
 ], UserController);
 exports.UserController = UserController;
 //# sourceMappingURL=user.controller.js.map

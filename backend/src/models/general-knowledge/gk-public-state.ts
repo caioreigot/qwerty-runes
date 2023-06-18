@@ -5,6 +5,7 @@ import { Scoreboard } from './scoreboard';
 import { ScoreboardItem } from './scoreboard-item';
 
 export class GeneralKnowledgeGamePublicState extends PublicState {
+  
   playersAnsweredCorrectly: string[] = [];
   correctAnswer: string | null;
   scoreboard: Scoreboard[] = [];

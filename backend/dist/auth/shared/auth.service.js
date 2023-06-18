@@ -37,19 +37,23 @@ let AuthService = class AuthService {
             return Object.assign(Object.assign({}, rest), { remember });
         }
         catch (error) {
-            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2025') {
-                    throw new common_1.HttpException('Nickname ou senha errados, não foi possível logar.', common_1.HttpStatus.UNAUTHORIZED);
-                }
+            if (!(error instanceof client_1.Prisma.PrismaClientKnownRequestError)) {
+                throw error;
+            }
+            if (error.code === 'P2025') {
+                throw new common_1.HttpException('Nickname ou senha errados, não foi possível logar.', common_1.HttpStatus.UNAUTHORIZED);
             }
             throw error;
         }
     }
-    async login(user, remember) {
-        const payload = { nickname: user.nickname, sub: user.id };
-        const tokenExp = remember ? '336h' : '2h';
+    async buildAndSendToken(nickname, remember) {
+        const payload = { nickname: nickname };
+        const tokenExp = remember ? '72h' : '6h';
+        const options = {
+            expiresIn: tokenExp
+        };
         return {
-            access_token: this.jwtService.sign(payload, { expiresIn: tokenExp }),
+            access_token: this.jwtService.sign(payload, options),
         };
     }
 };

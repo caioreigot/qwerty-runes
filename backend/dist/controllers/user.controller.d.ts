@@ -7,7 +7,7 @@ export declare class UserController {
     private authService;
     constructor(userRepository: UserRepository, authService: AuthService);
     create(body: UserBody): Promise<void>;
-    validate(request: any): Promise<{
+    login(request: any): Promise<{
         access_token: string;
     }>;
     hasToken(): void;

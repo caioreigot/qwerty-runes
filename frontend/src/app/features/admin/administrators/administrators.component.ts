@@ -30,7 +30,7 @@ export class AdministratorsComponent implements OnInit {
     this.backendService.addAdmin(nickname).subscribe({
       error: (response) => this.utilsService.handleResponseErrorAndShowInSnackbar(response),
       next: (response) => {
-        this.snackbarService.showMessage(`Administrador adicionado.`);
+        this.snackbarService.showMessage('Administrador adicionado.');
         const newAdminNicknames = this._adminNicknames.value;
         newAdminNicknames.push(response.nickname)
         this._adminNicknames.next(newAdminNicknames);

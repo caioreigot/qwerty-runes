@@ -6,6 +6,7 @@ import { UserRepository } from '../user-repository';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
+  
   constructor(private prisma: PrismaService) {}
 
   async create(nickname: string, password: string): Promise<void> {

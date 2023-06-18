@@ -1,8 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { Request } from 'express';
 import { AuthService } from '../auth/shared/auth.service';
-import { LocalAuthGuard } from '../auth/shared/local-auth.guard';
-import { JwtAuthGuard } from '../auth/shared/jwt-auth.guard';
 import {
   Body,
   Controller,
@@ -15,11 +13,17 @@ import {
 } from '@nestjs/common';
 import { UserBody } from '../dtos/user-body';
 import { UserRepository } from '../repositories/user-repository';
-import { AdminGuard } from '../auth/shared/admin.guard';
+import { LocalAuthGuard } from 'src/auth/shared/guards/local-auth.guard';
+import { JwtAuthGuard } from 'src/auth/shared/guards/jwt-auth.guard';
+import { AdminGuard } from 'src/auth/shared/guards/admin.guard';
 
 @Controller('user')
 export class UserController {
-  constructor(private userRepository: UserRepository, private authService: AuthService) {}
+  
+  constructor(
+    private userRepository: UserRepository,
+    private authService: AuthService
+  ) {}
 
   @Post('create')
   async create(@Body() body: UserBody): Promise<void> {
@@ -43,8 +47,11 @@ export class UserController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async validate(@Req() request: any): Promise<{ access_token: string }> {
-    return this.authService.login(request.user, request.body.remember);
+  async login(@Req() request: any): Promise<{ access_token: string }> {
+    return this.authService.buildAndSendToken(
+      request.user.nickname,
+      request.body.remember
+    );
   }
 
   @UseGuards(JwtAuthGuard)
