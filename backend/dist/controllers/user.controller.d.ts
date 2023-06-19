@@ -1,16 +1,18 @@
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthService } from '../auth/shared/auth.service';
 import { UserBody } from '../dtos/user-body';
 import { UserRepository } from '../repositories/user-repository';
+import { JwtService } from '@nestjs/jwt';
 export declare class UserController {
     private userRepository;
     private authService;
-    constructor(userRepository: UserRepository, authService: AuthService);
+    private jwtService;
+    constructor(userRepository: UserRepository, authService: AuthService, jwtService: JwtService);
     create(body: UserBody): Promise<void>;
     login(request: any): Promise<{
         access_token: string;
     }>;
-    hasToken(): void;
+    loginWithToken(token: string, response: Response): Response<any, Record<string, any>>;
     isAdmin(): Promise<boolean>;
     getAllAdminNicknames(): Promise<string[]>;
     removeAdmin(request: Request): Promise<{

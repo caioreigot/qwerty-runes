@@ -21,10 +21,12 @@ const user_repository_1 = require("../repositories/user-repository");
 const local_auth_guard_1 = require("../auth/shared/guards/local-auth.guard");
 const jwt_auth_guard_1 = require("../auth/shared/guards/jwt-auth.guard");
 const admin_guard_1 = require("../auth/shared/guards/admin.guard");
+const jwt_1 = require("@nestjs/jwt");
 let UserController = class UserController {
-    constructor(userRepository, authService) {
+    constructor(userRepository, authService, jwtService) {
         this.userRepository = userRepository;
         this.authService = authService;
+        this.jwtService = jwtService;
     }
     async create(body) {
         try {
@@ -43,8 +45,26 @@ let UserController = class UserController {
     async login(request) {
         return this.authService.buildAndSendToken(request.user.nickname, request.body.remember);
     }
-    hasToken() {
-        return;
+    loginWithToken(token, response) {
+        const jwt = token.replace('Bearer ', '');
+        try {
+            this.jwtService.verify(jwt);
+        }
+        catch (error) {
+            throw new common_1.ForbiddenException("O token fornecido não é válido.");
+        }
+        const jwtDecoded = this.jwtService.decode(jwt);
+        if (!jwtDecoded.renewSession) {
+            return response.status(common_1.HttpStatus.OK).send();
+        }
+        const payload = {
+            nickname: jwtDecoded.nickname,
+            renewSession: true
+        };
+        const options = { expiresIn: '72h' };
+        response.status(common_1.HttpStatus.OK).json({
+            access_token: this.jwtService.sign(payload, options),
+        });
     }
     async isAdmin() {
         return;
@@ -75,12 +95,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "login", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('token-login'),
+    __param(0, (0, common_1.Headers)('authorization')),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
-], UserController.prototype, "hasToken", null);
+], UserController.prototype, "loginWithToken", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, admin_guard_1.AdminGuard),
     (0, common_1.Get)('is-admin'),
@@ -114,7 +135,8 @@ __decorate([
 UserController = __decorate([
     (0, common_1.Controller)('user'),
     __metadata("design:paramtypes", [user_repository_1.UserRepository,
-        auth_service_1.AuthService])
+        auth_service_1.AuthService,
+        jwt_1.JwtService])
 ], UserController);
 exports.UserController = UserController;
 //# sourceMappingURL=user.controller.js.map

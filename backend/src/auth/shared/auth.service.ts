@@ -6,7 +6,10 @@ import { UserRepository } from '../../repositories/user-repository';
 @Injectable()
 export class AuthService {
   
-  constructor(private userRepository: UserRepository, private jwtService: JwtService) {}
+  constructor(
+    private userRepository: UserRepository,
+    private jwtService: JwtService
+  ) {}
 
   async validate(
     nickname: string,
@@ -35,12 +38,13 @@ export class AuthService {
   }
 
   async buildAndSendToken(nickname: string, remember: boolean) {
-    const payload = { nickname: nickname };
-    const tokenExp = remember ? '72h' : '6h';
+    const payload = { 
+      nickname: nickname,
+      renewSession: remember
+    };
 
-    const options = {
-      expiresIn: tokenExp
-    }
+    const tokenExp = remember ? '72h' : '4h';
+    const options = { expiresIn: tokenExp };
 
     return {
       access_token: this.jwtService.sign(payload, options),

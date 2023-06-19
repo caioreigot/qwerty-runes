@@ -8,22 +8,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthzController = void 0;
 const common_1 = require("@nestjs/common");
 let HealthzController = class HealthzController {
-    healthz(response) {
-        response.status(common_1.HttpStatus.OK).send('O servidor está funcionando corretamente.');
+    healthz() {
+        return 'O servidor está funcionando corretamente.';
     }
 };
 __decorate([
-    (0, common_1.Get)('/healthz'),
-    __param(0, (0, common_1.Res)()),
+    (0, common_1.All)('/healthz'),
+    (0, common_1.HttpCode)(200),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], HealthzController.prototype, "healthz", null);
 HealthzController = __decorate([

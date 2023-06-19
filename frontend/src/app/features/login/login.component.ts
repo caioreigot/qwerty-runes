@@ -28,8 +28,8 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     // Se estiver com um token ainda não expirado, logue diretamente
     this.backendService.useTokenToValidateAuthentication().subscribe({
-      error: () => this.loadingModal?.nativeElement.remove(),
-      complete: () => this.route.navigate(['/games'])
+      complete: () => this.route.navigate(['/games']),
+      error: () => this.loadingModal?.nativeElement.remove()
     });
   }
 
@@ -56,6 +56,6 @@ export class LoginComponent implements OnInit {
           this.localStorageService.setToken(token);
           this.route.navigate(['/games']);
         }
-      })
+      });
   }
 }

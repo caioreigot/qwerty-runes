@@ -47,11 +47,12 @@ let AuthService = class AuthService {
         }
     }
     async buildAndSendToken(nickname, remember) {
-        const payload = { nickname: nickname };
-        const tokenExp = remember ? '72h' : '6h';
-        const options = {
-            expiresIn: tokenExp
+        const payload = {
+            nickname: nickname,
+            renewSession: remember
         };
+        const tokenExp = remember ? '72h' : '4h';
+        const options = { expiresIn: tokenExp };
         return {
             access_token: this.jwtService.sign(payload, options),
         };
@@ -59,7 +60,8 @@ let AuthService = class AuthService {
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [user_repository_1.UserRepository, jwt_1.JwtService])
+    __metadata("design:paramtypes", [user_repository_1.UserRepository,
+        jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
 //# sourceMappingURL=auth.service.js.map

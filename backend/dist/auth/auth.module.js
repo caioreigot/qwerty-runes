@@ -10,24 +10,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
-const jwt_1 = require("@nestjs/jwt");
-const constants_1 = require("./shared/constants");
 const auth_service_1 = require("./shared/auth.service");
 const jwt_strategy_1 = require("./shared/strategies/jwt.strategy");
 const local_strategy_service_1 = require("./shared/strategies/local-strategy.service");
 const prisma_service_1 = require("../database/prisma.service");
 const user_repository_1 = require("../repositories/user-repository");
 const prisma_user_repository_1 = require("../repositories/prisma/prisma-user-repository");
+const jwt_1 = require("@nestjs/jwt");
+const constants_1 = require("./shared/constants");
+const jwtRegistered = jwt_1.JwtModule.register({
+    secret: (_a = process.env.JWT_SECRET) !== null && _a !== void 0 ? _a : constants_1.jwtConstants.secret,
+});
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             passport_1.PassportModule,
-            jwt_1.JwtModule.register({
-                secret: (_a = process.env.JWT_SECRET) !== null && _a !== void 0 ? _a : constants_1.jwtConstants.secret,
-                signOptions: { expiresIn: '336h' },
-            }),
+            jwtRegistered
         ],
         controllers: [],
         providers: [

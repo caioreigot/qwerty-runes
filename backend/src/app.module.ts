@@ -12,6 +12,8 @@ import { PrismaGeneralKnowledgeRepository } from './repositories/prisma/prisma-g
 import { UserController } from './controllers/user.controller';
 import { GeneralKnowledgeController } from './controllers/general-knowledge.controller';
 import { HealthzController } from './controllers/healthz.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './auth/shared/constants';
 
 const ConfiguredServeStaticModule = ServeStaticModule.forRoot({
   rootPath: join(__dirname, 'front'),
@@ -27,11 +29,16 @@ const UseGeneralKnowledgeRepositoryWithPrisma = {
   useClass: PrismaGeneralKnowledgeRepository,
 };
 
+const jwtRegistered = JwtModule.register({
+  secret: process.env.JWT_SECRET ?? jwtConstants.secret,
+});
+
 @Module({
   imports: [
     AuthModule,
     GatewaysModule,
-    ConfiguredServeStaticModule
+    ConfiguredServeStaticModule,
+    jwtRegistered
   ],
   controllers: [
     UserController,
@@ -44,6 +51,8 @@ const UseGeneralKnowledgeRepositoryWithPrisma = {
     UseGeneralKnowledgeRepositoryWithPrisma,
     UtilsService,
   ],
-  exports: [PrismaService],
+  exports: [
+    PrismaService
+  ],
 })
 export class AppModule {}

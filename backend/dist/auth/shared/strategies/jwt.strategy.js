@@ -24,7 +24,10 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         });
     }
     async validate(payload) {
-        return { nickname: payload.nickname };
+        return {
+            nickname: payload.nickname,
+            renewSession: payload.renewSession
+        };
     }
 };
 JwtStrategy = __decorate([

@@ -5,6 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const utils_service_1 = require("./controllers/shared/utils.service");
@@ -21,6 +22,8 @@ const prisma_general_knowledge_repository_1 = require("./repositories/prisma/pri
 const user_controller_1 = require("./controllers/user.controller");
 const general_knowledge_controller_1 = require("./controllers/general-knowledge.controller");
 const healthz_controller_1 = require("./controllers/healthz.controller");
+const jwt_1 = require("@nestjs/jwt");
+const constants_1 = require("./auth/shared/constants");
 const ConfiguredServeStaticModule = serve_static_1.ServeStaticModule.forRoot({
     rootPath: (0, path_1.join)(__dirname, 'front'),
 });
@@ -32,6 +35,9 @@ const UseGeneralKnowledgeRepositoryWithPrisma = {
     provide: general_knowledge_repository_1.GeneralKnowledgeRepository,
     useClass: prisma_general_knowledge_repository_1.PrismaGeneralKnowledgeRepository,
 };
+const jwtRegistered = jwt_1.JwtModule.register({
+    secret: (_a = process.env.JWT_SECRET) !== null && _a !== void 0 ? _a : constants_1.jwtConstants.secret,
+});
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -39,7 +45,8 @@ AppModule = __decorate([
         imports: [
             auth_module_1.AuthModule,
             gateways_module_1.GatewaysModule,
-            ConfiguredServeStaticModule
+            ConfiguredServeStaticModule,
+            jwtRegistered
         ],
         controllers: [
             user_controller_1.UserController,
@@ -52,7 +59,9 @@ AppModule = __decorate([
             UseGeneralKnowledgeRepositoryWithPrisma,
             utils_service_1.UtilsService,
         ],
-        exports: [prisma_service_1.PrismaService],
+        exports: [
+            prisma_service_1.PrismaService
+        ],
     })
 ], AppModule);
 exports.AppModule = AppModule;
