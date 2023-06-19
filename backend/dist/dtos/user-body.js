@@ -15,7 +15,7 @@ const class_validator_1 = require("class-validator");
 class UserBody {
 }
 __decorate([
-    (0, class_validator_1.IsNotEmpty)({ message: 'O campo de apelido não pode estar vazio.' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'O campo nickname não pode estar vazio.' }),
     (0, class_validator_1.MaxLength)(20, { message: 'O nickname não pode ter mais do que 20 caracteres.' }),
     (0, class_transformer_1.Transform)(({ value }) => value === null || value === void 0 ? void 0 : value.trim()),
     __metadata("design:type", String)

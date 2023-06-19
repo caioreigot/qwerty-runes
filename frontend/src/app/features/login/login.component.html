@@ -2,7 +2,7 @@
   <img src="/assets/rolling.svg" />
 </div>
 
-<div class="little-container">
+<main>
   <h1>Qwerty Runes</h1>
   <h2>Entre com sua conta ou cadastre-se, é bem rapido!</h2>
   <div class="inputs-container">
@@ -14,12 +14,17 @@
       placeholder="Senha" />
     <div class="remember-me-container">
       <input #rememberCheckbox id="remember-me" type="checkbox" />
-      <label title="Ao entrar com esta opção desmarcada, sua sessão irá expirar em 2 horas" 
-        for="remember-me">Lembrar da conta por mais tempo</label>
+      <label for="remember-me">
+        Lembre-se de mim
+      </label>
     </div>
   </div>
   <div class="bottom-container">
-    <a routerLink="registration">Cadastrar conta</a>
-    <button (click)="onLogin()">Entrar</button>
+    <a routerLink="registration">
+      Cadastrar conta
+    </a>
+    <button (click)="onLogin()">
+      Entrar
+    </button>
   </div>
-</div>
+</main>

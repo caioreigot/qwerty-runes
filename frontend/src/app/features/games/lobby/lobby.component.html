@@ -1,18 +1,22 @@
-<div class="left-side">
+<aside class="menu">
+  <div class="title-container">
+    <img src="/assets/qwerty-keys.svg">
+  </div>
+  <div class="divider"></div>
+  <div class="enter-room-code">
+    <input #roomCode
+    [useInputValueOnEnter]="enterRoom.bind(this)"
+    type="text"
+    placeholder="Código da sala" />
+    <button (click)="enterRoom(roomCode.value)">
+      Entrar
+    </button>
+  </div>
+</aside>
+<div class="mini-games-container">
   <h1 class="mini-games-title">MINI-JOGOS</h1>
   <app-game-card
     routerLink="general-knowledge"
     icon="/assets/brain-circuit.svg"
     game="Conhecimento geral" />
-</div>
-<div class="right-side">
-  <div class="enter-room-code">
-    <input #roomCode
-      [useInputValueOnEnter]="enterRoom.bind(this)"
-      type="text"
-      placeholder="Código da sala" />
-    <button (click)="enterRoom(roomCode.value)">
-      Entrar
-    </button>
-  </div>
 </div>
