@@ -3,6 +3,7 @@ import { MiniGameType } from './mini-game-type';
 import { PublicState } from './public-state';
 
 export class MiniGameRoom {
+  
   code: string;
   miniGameType: MiniGameType;
   state: GameState<PublicState>;

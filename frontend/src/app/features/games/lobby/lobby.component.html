@@ -20,3 +20,9 @@
     icon="/assets/brain-circuit.svg"
     game="Conhecimento geral" />
 </div>
+
+<img class="admin"
+  routerLink="/admin"
+  [class.hidden]="!(isUserAdmin | async)"
+  title="Administração"
+  src="/assets/admin.svg">

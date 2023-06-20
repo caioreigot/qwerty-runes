@@ -11,12 +11,5 @@
 </div>
 
 <main>
-  <router-outlet>
-  </router-outlet>
+  <router-outlet></router-outlet>
 </main>
-
-<img class="admin"
-  routerLink="/admin"
-  [class.hidden]="!(isUserAdmin | async)"
-  title="Administração"
-  src="/assets/admin.svg">

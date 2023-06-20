@@ -8,7 +8,7 @@ export declare class UserController {
     private authService;
     private jwtService;
     constructor(userRepository: UserRepository, authService: AuthService, jwtService: JwtService);
-    create(body: UserBody): Promise<void>;
+    create(body: UserBody, ip: string): Promise<void>;
     login(request: any): Promise<{
         access_token: string;
     }>;

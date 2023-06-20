@@ -93,6 +93,7 @@ let GeneralKnowledgeService = class GeneralKnowledgeService {
         server.to(room.code).emit('state-changed', room.state.public);
     }
     receiveAnswer(server, socket, answer) {
+        const lowerCaseAnswer = answer.trim().toLowerCase();
         game_rooms_service_1.GameRoomsService.rooms.forEach((room) => {
             var _a;
             if (!(room.state instanceof gk_game_state_1.GeneralKnowledgeGameState))
@@ -100,27 +101,28 @@ let GeneralKnowledgeService = class GeneralKnowledgeService {
             const targetNickname = (_a = room.state.public.players.find((player) => player.socketId == socket.id)) === null || _a === void 0 ? void 0 : _a.nickname;
             if (!targetNickname)
                 return;
-            const answersLowerCase = this.splitAcceptableAnswers(room.state.currentAcceptableAnswers).map((answer) => answer.toLowerCase());
-            const playerAnsweredCorrectly = answersLowerCase.includes(answer.toLowerCase());
-            if (room.state instanceof gk_game_state_1.GeneralKnowledgeGameState) {
-                room.state.public.scoreboard.forEach((scoreboardItem) => {
-                    if (scoreboardItem.nickname === targetNickname) {
-                        if (playerAnsweredCorrectly) {
-                            const roomState = room.state;
-                            if (roomState.public.playersAnsweredCorrectly.length >= 1) {
-                                scoreboardItem.score += Math.max(roomState.public.timerInSeconds - 1, 1);
-                            }
-                            else {
-                                scoreboardItem.score += roomState.public.timerInSeconds;
-                            }
-                            roomState.public.playersAnsweredCorrectly.push(targetNickname);
-                            scoreboardItem.lastGuess = '';
-                            return;
-                        }
-                        scoreboardItem.lastGuess = answer;
+            const answersLowerCase = this.splitAcceptableAnswers(room.state.currentAcceptableAnswers)
+                .map((answer) => answer.toLowerCase());
+            const playerAnsweredCorrectly = answersLowerCase.includes(lowerCaseAnswer);
+            room.state.public.scoreboard.forEach((scoreboardItem) => {
+                if (scoreboardItem.nickname !== targetNickname) {
+                    return;
+                }
+                if (playerAnsweredCorrectly) {
+                    const roomState = room.state;
+                    const score = Math.ceil(5 + roomState.public.timerInSeconds / 2);
+                    if (roomState.public.playersAnsweredCorrectly.length >= 1) {
+                        scoreboardItem.score += Math.max(score - 1, 1);
                     }
-                });
-            }
+                    else {
+                        scoreboardItem.score += score;
+                    }
+                    roomState.public.playersAnsweredCorrectly.push(targetNickname);
+                    scoreboardItem.lastGuess = '';
+                    return;
+                }
+                scoreboardItem.lastGuess = answer;
+            });
             server.to(room.code).emit('state-changed', room.state.public);
         });
     }

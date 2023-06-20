@@ -74,9 +74,9 @@ let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
             iterations++;
         }
     }
-    joinRoom(server, socket, nickname, roomCodeArg) {
-        const roomCode = roomCodeArg.toUpperCase();
-        const targetRoom = GameRoomsService_1.rooms.find((room) => room.code === roomCode);
+    joinRoom(server, socket, nickname, roomCode) {
+        roomCode = roomCode.toUpperCase();
+        const targetRoom = this.getRoom(roomCode);
         if (!targetRoom) {
             socket.emit('error', 'Esta sala não existe.');
             return;
@@ -85,8 +85,8 @@ let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
             socket.emit('error', 'O jogo já começou nesta sala.');
             return;
         }
-        for (let j = 0; j < targetRoom.state.public.players.length; j++) {
-            const currentNickname = targetRoom.state.public.players[j].nickname;
+        for (let i = 0; i < targetRoom.state.public.players.length; i++) {
+            const currentNickname = targetRoom.state.public.players[i].nickname;
             if (nickname === currentNickname) {
                 socket.emit('error', 'Você já está conectado na sala.');
                 return;
@@ -99,14 +99,15 @@ let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
         server.to(roomCode).emit('state-changed', targetRoom.state.public);
     }
     async startGame(server, room) {
-        const roomToStartGame = GameRoomsService_1.rooms.find((currentRoom) => currentRoom.code === room.code);
+        const roomToStartGame = this.getRoom(room.code);
         if (!roomToStartGame)
             return;
         roomToStartGame.state.public.gameStarted = true;
         if (room.state instanceof gk_game_state_1.GeneralKnowledgeGameState) {
-            room.state.boardQuestionsIdQueue =
-                await this.generalKnowledgeRepository.getApprovedQuestionIdentifiers(20);
-            const question = await this.generalKnowledgeRepository.getQuestion(room.state.boardQuestionsIdQueue[0]);
+            room.state.boardQuestionsIdQueue = await this.generalKnowledgeRepository
+                .getApprovedQuestionIdentifiers(20);
+            const question = await this.generalKnowledgeRepository
+                .getQuestion(room.state.boardQuestionsIdQueue[0]);
             if (!question)
                 return;
             room.state.boardQuestionsIdQueue.splice(0, 1);
@@ -160,13 +161,17 @@ let GameRoomsService = GameRoomsService_1 = class GameRoomsService {
             });
         });
     }
+    getRoom(roomCode) {
+        var _a;
+        return (_a = GameRoomsService_1.rooms.find((room) => room.code === roomCode)) !== null && _a !== void 0 ? _a : null;
+    }
     removeRoom(roomCode) {
         const roomIndex = GameRoomsService_1.rooms.findIndex((room) => room.code === roomCode);
         GameRoomsService_1.rooms.splice(roomIndex, 1);
     }
 };
-GameRoomsService.rooms = [];
 GameRoomsService.ROOM_CODE_LENGTH = 4;
+GameRoomsService.rooms = [];
 GameRoomsService = GameRoomsService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [general_knowledge_repository_1.GeneralKnowledgeRepository])

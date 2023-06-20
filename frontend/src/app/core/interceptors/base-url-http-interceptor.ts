@@ -12,7 +12,7 @@ export class BaseUrlHttpInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler) {
     const token = this.localStorageService.getToken() ?? '';
 
-    // Injetando o token nos headers
+    // injetando o token nos headers
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

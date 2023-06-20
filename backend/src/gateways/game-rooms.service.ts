@@ -7,11 +7,13 @@ import { GameState } from 'src/models/game-state';
 import { MiniGameType } from 'src/models/mini-game-type';
 import { GeneralKnowledgeGameState } from 'src/models/general-knowledge/gk-game-state';
 import { GeneralKnowledgeQuestionType } from 'src/models/general-knowledge/gk-question-type';
+import { GeneralKnowledgeQuestion } from '@prisma/client';
 
 @Injectable()
 export class GameRoomsService {
-  static rooms: MiniGameRoom[] = [];
-  static ROOM_CODE_LENGTH = 4;
+
+  private static readonly ROOM_CODE_LENGTH = 4;
+  public static rooms: MiniGameRoom[] = [];
 
   constructor(private generalKnowledgeRepository: GeneralKnowledgeRepository) {}
 
@@ -28,6 +30,7 @@ export class GameRoomsService {
     }, 1000 * 60 * intervalInMinutes);
   }
 
+  // Gera um código aleatório com o comprimento fornecido
   generateRandomCode(codeLength: number) {
     return randomstring
       .generate({
@@ -84,24 +87,25 @@ export class GameRoomsService {
     }
   }
 
-  // Faz o socket entrar em uma sala e emite o novo PublicState com o novo player
-  joinRoom(server: Server, socket: Socket, nickname: string, roomCodeArg: string) {
-    const roomCode = roomCodeArg.toUpperCase();
-
-    const targetRoom = GameRoomsService.rooms.find((room) => room.code === roomCode);
+  // Faz o socket entrar em uma sala e emite o PublicState com o novo player
+  joinRoom(server: Server, socket: Socket, nickname: string, roomCode: string) {
+    roomCode = roomCode.toUpperCase();
+    const targetRoom = this.getRoom(roomCode);
 
     if (!targetRoom) {
       socket.emit('error', 'Esta sala não existe.');
       return;
     }
 
+    // Se o jogo já houver começado, retorna
     if (targetRoom.state.public.gameStarted) {
       socket.emit('error', 'O jogo já começou nesta sala.');
       return;
     }
 
-    for (let j = 0; j < targetRoom.state.public.players.length; j++) {
-      const currentNickname = targetRoom.state.public.players[j].nickname;
+    // Verifica se o jogador já está conectado, e, caso positivo, retorna
+    for (let i = 0; i < targetRoom.state.public.players.length; i++) {
+      const currentNickname = targetRoom.state.public.players[i].nickname;
 
       if (nickname === currentNickname) {
         socket.emit('error', 'Você já está conectado na sala.');
@@ -118,25 +122,27 @@ export class GameRoomsService {
     server.to(roomCode).emit('state-changed', targetRoom.state.public);
   }
 
+  // Starta o jogo de uma sala
   async startGame(server: Server, room: MiniGameRoom) {
-    const roomToStartGame = GameRoomsService.rooms.find(
-      (currentRoom) => currentRoom.code === room.code,
-    );
+    const roomToStartGame = this.getRoom(room.code);
 
     if (!roomToStartGame) return;
     roomToStartGame.state.public.gameStarted = true;
 
+    /* Cada GameState tem sua própria "maneira" de iniciar o jogo,
+    por isso cada um precisa de um "if" nesta parte do código */
     if (room.state instanceof GeneralKnowledgeGameState) {
-      room.state.boardQuestionsIdQueue =
-        await this.generalKnowledgeRepository.getApprovedQuestionIdentifiers(20);
+      // Passa 20 id's de questões diferentes para a fila de questões da board
+      room.state.boardQuestionsIdQueue = await this.generalKnowledgeRepository
+        .getApprovedQuestionIdentifiers(20);
 
-      const question = await this.generalKnowledgeRepository.getQuestion(
-        room.state.boardQuestionsIdQueue[0],
-      );
+      // Pega a questão do banco usando seu respectivo id
+      const question: GeneralKnowledgeQuestion = await this.generalKnowledgeRepository
+        .getQuestion(room.state.boardQuestionsIdQueue[0]);
 
       if (!question) return;
 
-      // Retira o ID que foi atualmente usado
+      // Retira o id que foi atualmente usado
       room.state.boardQuestionsIdQueue.splice(0, 1);
       room.state.currentAcceptableAnswers = question.acceptableAnswers;
 
@@ -163,7 +169,7 @@ export class GameRoomsService {
       for (let j = 0; j < room.state.public.players.length; j++) {
         const player = room.state.public.players[j];
 
-        // Se não for o player, retorna e vai pra proxima iteração
+        // Se não foi esse player que chamou o toggle, retorna e vai pra proxima iteração
         if (player.socketId !== socket.id) continue;
 
         room.state.public.toggleReady(player);
@@ -206,8 +212,15 @@ export class GameRoomsService {
     });
   }
 
+  // Retorna a sala com o mesmo código passado como parâmetro caso exista
+  private getRoom(roomCode: string): MiniGameRoom | null {
+    return GameRoomsService.rooms.find(
+      (room) => room.code === roomCode,
+    ) ?? null;
+  }
+
   // Remove a sala do array "rooms" desta classe
-  private removeRoom(roomCode) {
+  private removeRoom(roomCode: string) {
     const roomIndex = GameRoomsService.rooms.findIndex((room) => room.code === roomCode);
     GameRoomsService.rooms.splice(roomIndex, 1);
   }

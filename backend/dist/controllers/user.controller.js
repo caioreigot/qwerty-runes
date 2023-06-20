@@ -22,22 +22,26 @@ const local_auth_guard_1 = require("../auth/shared/guards/local-auth.guard");
 const jwt_auth_guard_1 = require("../auth/shared/guards/jwt-auth.guard");
 const admin_guard_1 = require("../auth/shared/guards/admin.guard");
 const jwt_1 = require("@nestjs/jwt");
+const spam_checker_1 = require("../utils/spam-checker");
 let UserController = class UserController {
     constructor(userRepository, authService, jwtService) {
         this.userRepository = userRepository;
         this.authService = authService;
         this.jwtService = jwtService;
     }
-    async create(body) {
+    async create(body, ip) {
+        if (spam_checker_1.SpamChecker.isSpam(ip)) {
+            throw new common_1.HttpException('Espere um tempo antes de fazer novos cadastros.', common_1.HttpStatus.TOO_MANY_REQUESTS);
+        }
         try {
             await this.userRepository.create(body.nickname, body.password);
         }
         catch (error) {
-            if (error instanceof client_1.Prisma.PrismaClientKnownRequestError) {
-                if (error.code === 'P2002') {
-                    throw new common_1.HttpException('Este nickname já está em uso! Por favor, escolha outro.', common_1.HttpStatus.CONFLICT);
-                }
+            if (!(error instanceof client_1.Prisma.PrismaClientKnownRequestError)) {
                 throw error;
+            }
+            if (error.code === 'P2002') {
+                throw new common_1.HttpException('Este nickname já está em uso! Por favor, escolha outro.', common_1.HttpStatus.CONFLICT);
             }
             throw error;
         }
@@ -82,8 +86,9 @@ let UserController = class UserController {
 __decorate([
     (0, common_1.Post)('create'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Ip)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_body_1.UserBody]),
+    __metadata("design:paramtypes", [user_body_1.UserBody, String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
 __decorate([

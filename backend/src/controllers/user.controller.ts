@@ -9,6 +9,7 @@ import {
   Headers,
   HttpException,
   HttpStatus,
+  Ip,
   Post,
   Req,
   Res,
@@ -20,6 +21,7 @@ import { LocalAuthGuard } from 'src/auth/shared/guards/local-auth.guard';
 import { JwtAuthGuard } from 'src/auth/shared/guards/jwt-auth.guard';
 import { AdminGuard } from 'src/auth/shared/guards/admin.guard';
 import { JwtService } from '@nestjs/jwt';
+import { SpamChecker } from 'src/utils/spam-checker';
 
 @Controller('user')
 export class UserController {
@@ -31,19 +33,30 @@ export class UserController {
   ) {}
 
   @Post('create')
-  async create(@Body() body: UserBody): Promise<void> {
+  async create(
+    @Body() body: UserBody,
+    @Ip() ip: string,
+  ): Promise<void> {
+    // Se for spam, lança um erro de código 429
+    if (SpamChecker.isSpam(ip)) {
+      throw new HttpException(
+        'Espere um tempo antes de fazer novos cadastros.',
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
     try {
       await this.userRepository.create(body.nickname, body.password);
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new HttpException(
-            'Este nickname já está em uso! Por favor, escolha outro.',
-            HttpStatus.CONFLICT,
-          );
-        }
-
+      if (!(error instanceof Prisma.PrismaClientKnownRequestError)) {
         throw error;
+      }
+
+      if (error.code === 'P2002') {
+        throw new HttpException(
+          'Este nickname já está em uso! Por favor, escolha outro.',
+          HttpStatus.CONFLICT,
+        );
       }
 
       throw error;
@@ -60,9 +73,9 @@ export class UserController {
   }
 
   /*
-    Quando o usuário faz uma requisição GET /token-login passando o token JWT
-    no header "authorization", este controlador valida o jwt e retorna código 200
-    (sucesso) se o token for válido, ou forbidden se o token não for válido/expirou.
+    Quando o usuário faz uma requisição GET /token-login passando o token JWT no
+    header "authorization", este controlador valida o JWT e retorna código 200 (OK)
+    se o token for válido, ou código 403 (Forbidden) se o token não for válido/expirou.
     Caso o usuário tenha a claim "renewSession" de valor "true" no payload do jwt,
     este controlador retornará um novo token que expira após 72h para o usuário
     poder usar (assim, cada vez que ele logar com o renewSession sendo true, a
@@ -71,7 +84,7 @@ export class UserController {
   @Get('token-login')
   loginWithToken(
     @Headers('authorization') token: string,
-    @Res() response: Response
+    @Res() response: Response,
   ) {
     const jwt = token.replace('Bearer ', '');
 
@@ -83,7 +96,7 @@ export class UserController {
 
     const jwtDecoded: any = this.jwtService.decode(jwt);
 
-    // se não for para renovar o token, apenas deixa entrar
+    // Se não for para renovar o token, apenas deixa entrar
     if (!jwtDecoded.renewSession) {
       return response.status(HttpStatus.OK).send();
     }
@@ -93,7 +106,7 @@ export class UserController {
       renewSession: true
     };
 
-    // renova o token para durar mais 72h
+    // Renova o token para durar mais 72h
     const options = { expiresIn: '72h' };
     
     response.status(HttpStatus.OK).json({

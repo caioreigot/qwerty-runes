@@ -8,7 +8,7 @@ export class SnackbarService {
   showMessage(message: string, isError: boolean = false) {
     if (!message) {
       message = isError 
-        ? 'Ops! Erro desconhecido.'
+        ? 'Ops! Ocorreu um erro desconhecido.'
         : 'Sucesso!';
     }
 

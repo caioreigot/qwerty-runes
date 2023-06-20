@@ -121,6 +121,9 @@ export class GeneralKnowledgeService {
   }
 
   receiveAnswer(server: Server, socket: Socket, answer: string) {
+    // "Apara" a resposta e deixa em lower case
+    const lowerCaseAnswer = answer.trim().toLowerCase();
+
     GameRoomsService.rooms.forEach((room) => {
       if (!(room.state instanceof GeneralKnowledgeGameState)) return;
 
@@ -132,37 +135,38 @@ export class GeneralKnowledgeService {
       if (!targetNickname) return;
 
       // Transforma as respostas em lower case
-      const answersLowerCase = this.splitAcceptableAnswers(room.state.currentAcceptableAnswers).map(
-        (answer) => answer.toLowerCase(),
-      );
+      const answersLowerCase = this.splitAcceptableAnswers(room.state.currentAcceptableAnswers)
+        .map((answer) => answer.toLowerCase());
 
       // Vê se a resposta do jogador (em lower case) bate com uma das respostas aceitaveis (em lower case)
-      const playerAnsweredCorrectly = answersLowerCase.includes(answer.toLowerCase());
+      const playerAnsweredCorrectly = answersLowerCase.includes(lowerCaseAnswer);
 
-      if (room.state instanceof GeneralKnowledgeGameState) {
-        room.state.public.scoreboard.forEach((scoreboardItem) => {
-          if (scoreboardItem.nickname === targetNickname) {
-            if (playerAnsweredCorrectly) {
-              const roomState = room.state as GeneralKnowledgeGameState;
+      room.state.public.scoreboard.forEach((scoreboardItem) => {
+        if (scoreboardItem.nickname !== targetNickname) {
+          return;
+        }
 
-              // Se não foi o primeiro jogador a adivinhar, perde 1 ponto do total ao acertar
-              if (roomState.public.playersAnsweredCorrectly.length >= 1) {
-                scoreboardItem.score += Math.max(roomState.public.timerInSeconds - 1, 1);
-              } else {
-                scoreboardItem.score += roomState.public.timerInSeconds;
-              }
+        // Se o jogador respondeu corretamente
+        if (playerAnsweredCorrectly) {
+          const roomState = room.state as GeneralKnowledgeGameState;
+          const score = Math.ceil(5 + roomState.public.timerInSeconds / 2);
 
-              roomState.public.playersAnsweredCorrectly.push(targetNickname);
-              scoreboardItem.lastGuess = '';
-
-              // Retorna para que o "lastGuess" não seja atribuido
-              return;
-            }
-
-            scoreboardItem.lastGuess = answer;
+          // Se não foi o primeiro jogador a adivinhar, perde 1 ponto do total ao acertar
+          if (roomState.public.playersAnsweredCorrectly.length >= 1) {
+            scoreboardItem.score += Math.max(score - 1, 1);
+          } else {
+            scoreboardItem.score += score;
           }
-        });
-      }
+
+          roomState.public.playersAnsweredCorrectly.push(targetNickname);
+          scoreboardItem.lastGuess = '';
+
+          // Retorna para que o "lastGuess" não seja atribuido
+          return;
+        }
+
+        scoreboardItem.lastGuess = answer;
+      });
 
       server.to(room.code).emit('state-changed', room.state.public);
     });
